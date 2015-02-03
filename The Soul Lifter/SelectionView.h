@@ -17,6 +17,7 @@
     -(void)getCardsOfType:(NSString*)type;
     -(void)showMessageViewController:(MFMessageComposeViewController*)viewController;
     -(void)showMailViewController:(MFMailComposeViewController*)viewController;
+    -(void)updateCardData;
 //    -(void)setData;
 @end
 

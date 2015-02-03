@@ -13,7 +13,7 @@
 -(id)initForType:(NSString*)type {
     self = [super init];
     if( self ){
-        [self getSavedCardData];
+//        [self getSavedCardData];
     }
     return self;
 }
@@ -23,64 +23,101 @@
     // Retrieve File List
     
     NSMutableArray *allCards = [[NSMutableArray alloc] init];
-    for (Card *card in self.data) {
-        if([type isEqualToString:@"favorites"]){
+    if([type isEqualToString:@"Favorites"]){
+        for (Card *card in self.data) {
+            NSLog(@"%@", card.favorite ? @"YES" : @"NO");
             if(card.favorite){
                 [allCards addObject:card];
                 self.filtered = allCards;
             }
         }
+    } else if([type isEqualToString:@"Recents"]){
+        for (Card *card in self.data) {
+            // If card.lastUsed is <= Date.now() - Date.30 days ago
+            NSString *end = [NSString stringWithFormat:@"%@", card.lastUsed];
+            if(!end){
+                NSDateFormatter *f = [[NSDateFormatter alloc] init];
+                [f setDateFormat:@"yyyy-MM-ddHH:mm:ss ZZZ"];
+                NSDate *startDate = [NSDate date];
+                NSDate *endDate = [f dateFromString:end];
+                
+                
+                NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+                NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
+                                                                    fromDate:startDate
+                                                                      toDate:endDate
+                                                                     options:0];
+                NSLog(@"%ld", (long)components.day);
+                if(components.day <= 30){
+                    [allCards addObject:card];
+                    self.filtered = allCards;
+                }
+            }
+        }
+    } else if([type isEqualToString:@"Static"] || [type isEqualToString:@"Animated"]){
+        self.filtered = self.data;
+        for(Card *card in self.data){
+            NSLog(@"%@", card.title);
+        }
     }
 }
 
 -(void)setCardDefaults {
+    NSLog(@"Setting Defaults");
     Card *cardOne = [[Card alloc] initWithName:@"Card One"];
     cardOne.staticCard = @"cardOneFullCard.png";
     cardOne.animatedCard = @"cardOneFullCard.png";
-    NSData *dataOne = [NSKeyedArchiver archivedDataWithRootObject:cardOne];
-    [self.defaultData addObject:dataOne];
     [self.data addObject:cardOne];
 
     Card *cardTwo = [[Card alloc] initWithName:@"Card Two"];
     cardTwo.staticCard = @"cardTwoFullCard.png";
     cardTwo.animatedCard = @"cardTwoFullCard.png";
-    NSData *dataTwo = [NSKeyedArchiver archivedDataWithRootObject:cardTwo];
-    [self.defaultData addObject:dataTwo];
     [self.data addObject:cardTwo];
     
     Card *cardThree = [[Card alloc] initWithName:@"Card Three"];
     cardThree.staticCard = @"cardThreeFullCard.png";
     cardThree.animatedCard = @"cardThreeFullCard.png";
-    NSData *dataThree = [NSKeyedArchiver archivedDataWithRootObject:cardThree];
-    [self.defaultData addObject:dataThree];
     [self.data addObject:cardThree];
-    
-    [self.delegate sendCardsToView];
     [self saveCardData];
 }
 
 -(void)saveCardData {
+    NSLog(@"Saving Card Data");
     [NSUserDefaults resetStandardUserDefaults];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSData *cardData = [NSKeyedArchiver archivedDataWithRootObject:self.defaultData];
-    [defaults setObject:cardData forKey:@"cards"];
+    self.defaultData = nil;
+    self.defaultData = [[NSMutableArray alloc] init];
+    for (Card *card in self.data) {
+        card.favorite = YES;
+        NSLog(@"%@", card.favorite ? @"YES" : @"NO");
+        NSData *cardData = [NSKeyedArchiver archivedDataWithRootObject:card];
+        [self.defaultData addObject:cardData];
+    }
+    NSData *allCardData = [NSKeyedArchiver archivedDataWithRootObject:self.defaultData];
+    [defaults setObject:allCardData forKey:@"cards"];
+    [defaults synchronize];
     [defaults synchronize];
 }
 
 -(void)getSavedCardData {
-//    NSMutableArray *allCards = [[NSMutableArray alloc] init];
+    NSLog(@"Get saved Data");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults removeObjectForKey:@"cards"];
+//    [defaults removeObjectForKey:@"cards"];
     if([defaults objectForKey:@"cards"]){
         NSData *encodedObject = [defaults objectForKey:@"cards"];
         self.defaultData = [NSKeyedUnarchiver unarchiveObjectWithData:encodedObject];
+        NSMutableArray *temp = [[NSMutableArray alloc] init];
+        for (NSData *data in self.defaultData) {
+            Card *card = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+            [temp addObject:card];
+        }
+        self.data = temp;
     } else {
+        NSLog(@"No Object For Key");
         self.data = [[NSMutableArray alloc] init];
         self.defaultData = [[NSMutableArray alloc] init];
         [self setCardDefaults];
     }
-    
-    [self.delegate sendCardsToView];
 }
 
 @end

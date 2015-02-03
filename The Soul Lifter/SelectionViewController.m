@@ -27,19 +27,19 @@
     self.selectionView = [[SelectionView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     self.selectionView.viewTitle = section;
     self.selectionView.delegate = self;
-    [self.selectionView buildView];
     self.view = self.selectionView;
     
     self.model = [[SelectionModel alloc] initForType:section];
     self.model.delegate = self;
     [self getAllCardData];
     
-    
+    [self.selectionView buildView];
 }
 
 -(void)getAllCardData {
     // Does File Exist?
-    if( [self.model.data count] > 0 ){
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"cards"]){
         // Get it from the model
         [self.model getSavedCardData];
     } else {
@@ -49,31 +49,19 @@
 }
 
 -(void)sendCardsToView {
-    [self.selectionView addCardsToUIWithData:self.model.data];
+    [self.selectionView addCardsToUIWithData:self.model.filtered];
+}
+
+-(void)updateCardData {
+    [self.model saveCardData];
 }
 
 -(void)getCardsOfType:(NSString *)type {
-    if( self.model ){
-        NSLog(@"Model Exists");
-    }
     if( [self.model respondsToSelector:@selector(filterCardsByType:)]){
         [self.model filterCardsByType:type];
-//        if([type isEqualToString:@"static"]){
-//            [self.model filterCardsByType:@"static"];
-//        } else
-//        
-//        if([type isEqualToString:@"animated"]){
-//            [self.model filterCardsByType:@"animated"];
-//        } else
-//            
-//        if([type isEqualToString:@"favorites"]){
-//            [self.model filterCardsByType:@"favorites"];
-//        } else
-//            
-//        if([type isEqualToString:@"recents"]){
-//            [self.model filterCardsByType:@"recents"];
-//        }
+        self.selectionView.allCards = self.model.filtered;
     }
+    [self sendCardsToView];
 }
 
 -(void)showMessageViewController:(MFMessageComposeViewController *)viewController {
@@ -95,7 +83,9 @@
     } else if( result == MFMailComposeResultSaved ){
         NSLog(@"Mail Saved");
     } else if( result == MFMailComposeResultSent ){
-        NSLog(@"Mail Sent");
+        // Update "Last Used" on active card
+        NSDate *now = [NSDate date];
+        self.selectionView.activeCard.lastUsed = now;
     }
 }
 
@@ -106,7 +96,9 @@
     } else if( result == MessageComposeResultFailed ){
         NSLog(@"Message Failed");
     } else if( result == MessageComposeResultSent ){
-        NSLog(@"Message Sent");
+        // Update "Last Used" on active card
+        NSDate *now = [NSDate date];
+        self.selectionView.activeCard.lastUsed = now;
     }
 }
 

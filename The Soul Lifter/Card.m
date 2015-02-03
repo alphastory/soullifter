@@ -19,6 +19,10 @@
     return self;
 }
 
+-(void)markAsFavorite {
+    self.favorite = YES;
+}
+
 - (id)initWithCoder:(NSCoder *)decoder {
     if((self = [super init])) {
         //decode properties, other class vars

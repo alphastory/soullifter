@@ -17,6 +17,7 @@
 		635ED5F11A7550B10022429A /* StoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 635ED5F01A7550B10022429A /* StoreViewController.m */; };
 		635ED5F41A7550C20022429A /* StoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = 635ED5F31A7550C20022429A /* StoreView.m */; };
 		635ED5F71A7550D10022429A /* StoreModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 635ED5F61A7550D10022429A /* StoreModel.m */; };
+		636217D31A80609700464A7E /* FavoriteHeart.png in Resources */ = {isa = PBXBuildFile; fileRef = 636217D21A80609700464A7E /* FavoriteHeart.png */; };
 		636A92D41A62E584003CA8C8 /* animated_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 636A92D01A62E584003CA8C8 /* animated_active.png */; };
 		636A92D51A62E584003CA8C8 /* favorites_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 636A92D11A62E584003CA8C8 /* favorites_active.png */; };
 		636A92D61A62E584003CA8C8 /* static_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 636A92D21A62E584003CA8C8 /* static_active.png */; };
@@ -87,6 +88,7 @@
 		635ED5F31A7550C20022429A /* StoreView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreView.m; sourceTree = "<group>"; };
 		635ED5F51A7550D10022429A /* StoreModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreModel.h; sourceTree = "<group>"; };
 		635ED5F61A7550D10022429A /* StoreModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreModel.m; sourceTree = "<group>"; };
+		636217D21A80609700464A7E /* FavoriteHeart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteHeart.png; sourceTree = "<group>"; };
 		636A92D01A62E584003CA8C8 /* animated_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = animated_active.png; sourceTree = "<group>"; };
 		636A92D11A62E584003CA8C8 /* favorites_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = favorites_active.png; sourceTree = "<group>"; };
 		636A92D21A62E584003CA8C8 /* static_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = static_active.png; sourceTree = "<group>"; };
@@ -472,6 +474,7 @@
 				63D959881A5F82B4001650C2 /* icons */,
 				63D9597B1A5F82A4001650C2 /* cards */,
 				63D959791A5F82A1001650C2 /* newmarker.png */,
+				636217D21A80609700464A7E /* FavoriteHeart.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -592,6 +595,7 @@
 			files = (
 				636A92D81A62EB9D003CA8C8 /* Montserrat-Bold.ttf in Resources */,
 				636A92D91A62EB9D003CA8C8 /* Montserrat-Regular.ttf in Resources */,
+				636217D31A80609700464A7E /* FavoriteHeart.png in Resources */,
 				63D959961A5F82BD001650C2 /* settings.png in Resources */,
 				63D959981A5F82BD001650C2 /* store.png in Resources */,
 				63D9597A1A5F82A1001650C2 /* newmarker.png in Resources */,
@@ -772,6 +776,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/The",
@@ -783,6 +789,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -790,6 +797,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/The",
@@ -801,6 +810,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

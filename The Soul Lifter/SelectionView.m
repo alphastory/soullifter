@@ -29,6 +29,7 @@
     // Build the View
     CGFloat height = self.frame.size.height;
     CGFloat width = self.frame.size.width;
+    
     // Add Title Bar
     UILabel *selectionTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, width, height * .1)];
     [selectionTitle setTextColor:[UIColor whiteColor]];
@@ -89,6 +90,8 @@
     
     // Add the Go Back Action
     [goBackButton addTarget:self action:@selector(goBackClicked) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.delegate getCardsOfType:self.viewTitle];
 }
 
 -(void)addCardsToUIWithData:(NSMutableArray*)cardsList {
@@ -116,9 +119,6 @@
                 [self.cardsView addSubview:subview];
                 
                 // Get the current card.
-//                NSURL *imagePath = [[NSURL alloc] initWithString:[card objectForKey:@"static"]];
-//                NSData *imageData = [[NSData alloc] initWithContentsOfURL:imagePath];
-//                UIImage *currentCard = [UIImage imageWithData:imageData];
                 UIImage *currentCard = [UIImage imageNamed:card.staticCard];
                 UIImageView *currentCardView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, frame.size.width - 20, frame.size.height - 20)];
                 currentCardView.contentMode = UIViewContentModeScaleAspectFill;
@@ -144,24 +144,44 @@
     [self.cardsView addGestureRecognizer:doubleTap];
     
     if([self.viewTitle isEqualToString:@"Animated"]){
-        NSLog(@"Setting Preview Gesture");
         UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(playCardPreview)];
         singleTap.numberOfTapsRequired = 1;
         [self.cardsView addGestureRecognizer:singleTap];
         [singleTap requireGestureRecognizerToFail:doubleTap];
     }
     
-    self.activeCard = [self.allCards objectAtIndex:0];
+    if( [self.allCards count] > 0 ){
+        self.activeCard = [self.allCards objectAtIndex:0];
+    } else {
+        UILabel *noCards = [[UILabel alloc] initWithFrame:CGRectMake(0, (self.cardsView.frame.size.height / 2) - 25, self.cardsView.frame.size.width, 50)];
+        noCards.text = [NSString stringWithFormat:@"No cards marked as %@.", self.viewTitle];
+        noCards.font = montserrat;
+        noCards.textColor = [UIColor grayColor];
+        noCards.textAlignment = NSTextAlignmentCenter;
+        [self.cardsView addSubview:noCards];
+    }
     [self removeActivityIndicator];
 }
 
 -(void)addCardToFavorites {
-    NSLog(@"Adding Card To Favorites: %@", self.activeCard);
-    self.activeCard.favorite = YES;
-    // Show Heart Icon
+    NSLog(@"Adding Card To Favorites: %@", self.activeCard.title);
+//    self.activeCard.favorite = YES;
+    [self.activeCard markAsFavorite];
     
-    // Toggle self.activeCard.favorite
-//    card.favorite = YES;
+    // Show Heart Icon
+    UIImage *heart = [UIImage imageNamed:@"FavoriteHeart.png"];
+    UIImageView *favorited = [[UIImageView alloc] initWithFrame:CGRectMake((self.cardsView.frame.size.width / 2) - 26, (self.cardsView.frame.size.height * 0.6), 52, 41)];
+    favorited.image = heart;
+    [self addSubview:favorited];
+    
+    [UIView animateWithDuration:1.5 animations:^{
+        favorited.alpha = 0;
+    } completion:^(BOOL finished) {
+        [favorited removeFromSuperview];
+    }];
+    
+    
+    [self.delegate updateCardData];
 }
 
 -(void)playCardPreview {

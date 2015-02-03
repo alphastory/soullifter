@@ -14,7 +14,6 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if( self ){
-        NSLog(@"Initializing Home View");
         
         // Define sizes
         width = self.frame.size.width;

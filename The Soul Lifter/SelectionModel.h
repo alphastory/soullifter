@@ -24,6 +24,8 @@
 #pragma mark Object
 @interface SelectionModel : NSObject
 
+typedef void (^SelectionModelCallback)(void);
+
 @property (weak, nonatomic) id<SelectionModelDelegate> delegate;
 @property (strong, nonatomic) NSMutableArray *data;
 @property (strong, nonatomic) NSMutableArray *defaultData;
@@ -33,5 +35,6 @@
 -(void)setCardDefaults;
 -(void)getSavedCardData;
 -(void)filterCardsByType:(NSString*)type;
+-(void)saveCardData;
 
 @end

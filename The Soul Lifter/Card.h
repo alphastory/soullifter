@@ -32,5 +32,6 @@
 - (id)initWithName:(NSString *)name;
 - (id)initWithCoder:(NSCoder *)decoder;
 - (void)encodeWithCoder:(NSCoder *)encoder;
+- (void)markAsFavorite;
 
 @end
