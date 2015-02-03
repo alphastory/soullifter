@@ -32,6 +32,7 @@
         self.staticCard = [decoder decodeObjectForKey:@"static"];
         self.animatedCard = [decoder decodeObjectForKey:@"animated"];
         self.lastUsed = [decoder decodeObjectForKey:@"lastUsed"];
+        self.favorite = [decoder decodeBoolForKey:@"favorite"];
     }
     return self;
 }
@@ -44,7 +45,7 @@
     [encoder encodeObject:self.staticCard forKey:@"static"];
     [encoder encodeObject:self.animatedCard forKey:@"animated"];
     [encoder encodeObject:self.lastUsed forKey:@"lastUsed"];
-//    [encoder encodeObject:self.favorite forKey:@"favorite"];
+    [encoder encodeBool:self.favorite forKey:@"favorite"];
 }
 
 @end
