@@ -17,7 +17,7 @@
 
 @class UIImage;
 
-@interface Card : NSObject <NSURLConnectionDelegate, NSURLConnectionDataDelegate>
+@interface Card : NSObject <NSURLConnectionDelegate, NSURLConnectionDataDelegate, NSCoding>
 
 @property (strong, nonatomic) NSString *identifier;
 @property (strong, nonatomic) NSString *type;

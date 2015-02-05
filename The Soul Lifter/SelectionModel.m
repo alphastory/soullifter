@@ -25,7 +25,6 @@
     NSMutableArray *allCards = [[NSMutableArray alloc] init];
     if([type isEqualToString:@"Favorites"]){
         for (Card *card in self.data) {
-            NSLog(@"%@", card.favorite ? @"YES" : @"NO");
             if(card.favorite){
                 [allCards addObject:card];
                 self.filtered = allCards;
@@ -56,14 +55,11 @@
         }
     } else if([type isEqualToString:@"Static"] || [type isEqualToString:@"Animated"]){
         self.filtered = self.data;
-        for(Card *card in self.data){
-            NSLog(@"%@", card.title);
-        }
     }
 }
 
 -(void)setCardDefaults {
-    NSLog(@"Setting Defaults");
+    self.data = [[NSMutableArray alloc] init];
     Card *cardOne = [[Card alloc] initWithName:@"Card One"];
     cardOne.staticCard = @"cardOneFullCard.png";
     cardOne.animatedCard = @"cardOneFullCard.png";
@@ -82,40 +78,24 @@
 }
 
 -(void)saveCardData {
-    NSLog(@"Saving Card Data");
     [NSUserDefaults resetStandardUserDefaults];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    self.defaultData = nil;
-    self.defaultData = [[NSMutableArray alloc] init];
-    for (Card *card in self.data) {
-        card.favorite = YES;
-        NSLog(@"%@", card.favorite ? @"YES" : @"NO");
-        NSData *cardData = [NSKeyedArchiver archivedDataWithRootObject:card];
-        [self.defaultData addObject:cardData];
-    }
-    NSData *allCardData = [NSKeyedArchiver archivedDataWithRootObject:self.defaultData];
+    NSData *allCardData = [NSKeyedArchiver archivedDataWithRootObject:self.data];
     [defaults setObject:allCardData forKey:@"cards"];
-    [defaults synchronize];
     [defaults synchronize];
 }
 
 -(void)getSavedCardData {
-    NSLog(@"Get saved Data");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//    [defaults removeObjectForKey:@"cards"];
     if([defaults objectForKey:@"cards"]){
-        NSData *encodedObject = [defaults objectForKey:@"cards"];
-        self.defaultData = [NSKeyedUnarchiver unarchiveObjectWithData:encodedObject];
+        self.defaultData = [NSKeyedUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"cards"]];
         NSMutableArray *temp = [[NSMutableArray alloc] init];
-        for (NSData *data in self.defaultData) {
-            Card *card = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        for (Card *card in self.defaultData) {
             [temp addObject:card];
         }
-        self.data = temp;
+        self.data = [[NSMutableArray alloc] initWithArray:temp];
     } else {
         NSLog(@"No Object For Key");
-        self.data = [[NSMutableArray alloc] init];
-        self.defaultData = [[NSMutableArray alloc] init];
         [self setCardDefaults];
     }
 }
