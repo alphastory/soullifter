@@ -32,9 +32,9 @@
         }
     } else if([type isEqualToString:@"Recents"]){
         for (Card *card in self.data) {
-            // If card.lastUsed is <= Date.now() - Date.30 days ago
-            NSString *end = [NSString stringWithFormat:@"%@", card.lastUsed];
-            if(!end){
+            if( card.lastUsed ){
+                // If card.lastUsed is <= Date.now() - Date.30 days ago
+                NSString *end = [NSString stringWithFormat:@"%@", card.lastUsed];
                 NSDateFormatter *f = [[NSDateFormatter alloc] init];
                 [f setDateFormat:@"yyyy-MM-ddHH:mm:ss ZZZ"];
                 NSDate *startDate = [NSDate date];

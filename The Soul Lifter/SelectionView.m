@@ -204,14 +204,21 @@
 #pragma mark Send Card
 
 -(void)sendCardAsText {
+    NSLog(@"Sending as Text");
     MFMessageComposeViewController *messageVC = [[MFMessageComposeViewController alloc] init];
-    if([MFMessageComposeViewController respondsToSelector:@selector(canSendAttachments)] && [MFMessageComposeViewController canSendAttachments]){
-        NSString *filename = self.activeCard.title;
-        NSString* uti = (NSString*)kUTTypeMessage;
-        UIImage *image = [UIImage imageNamed:filename];
-        NSData* attachment = UIImageJPEGRepresentation(image, 1.0);
-        [messageVC addAttachmentData:attachment typeIdentifier:uti filename:filename];
-        [self.delegate showMessageViewController:messageVC];
+    NSLog(@"%hhd", [MFMessageComposeViewController respondsToSelector:@selector(canSendAttachments)]);
+    if([MFMessageComposeViewController respondsToSelector:@selector(canSendAttachments)] ){
+        if([MFMessageComposeViewController canSendAttachments]){
+            NSString *filename = self.activeCard.staticCard;
+            NSString* uti = (NSString*)kUTTypeMessage;
+            UIImage *image = [UIImage imageNamed:filename];
+            NSData* attachment = UIImageJPEGRepresentation(image, 1.0);
+            [messageVC addAttachmentData:attachment typeIdentifier:uti filename:filename];
+            [self.delegate showMessageViewController:messageVC];
+        }
+    } else {
+        UIAlertView *noAttach = [[UIAlertView alloc] initWithTitle:@"Cannot Send Attachments" message:@"Your version of iOS does not support sending attachments via an application. Please update your iOS version." delegate:self cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+        [noAttach show];
     }
 }
 
