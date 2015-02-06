@@ -187,6 +187,31 @@
 -(void)playCardPreview {
     NSLog(@"Playing Preview");
     // Show modal view
+    UIView *overlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+    overlay.backgroundColor = [UIColor blackColor];
+    overlay.alpha = 0.4;
+    [self addSubview:overlay];
+    
+    UIView *modal = [[UIView alloc] initWithFrame:CGRectMake(20, 20, self.frame.size.width - 40, self.frame.size.height - 40)];
+    modal.backgroundColor = [UIColor whiteColor];
+    modal.contentMode = UIViewContentModeScaleAspectFit;
+    [self addSubview:modal];
+    
+
+    UIImage *previewImage = [UIImage imageNamed:self.activeCard.animatedCard];
+    CGFloat imageWidth = previewImage.size.width;
+    CGFloat imageHeight = previewImage.size.height;
+    CGFloat aspect = imageWidth / imageHeight;
+    CGRect newFrame = CGRectMake(20, 40, self.frame.size.width - 40, (self.frame.size.height * aspect) - 50);
+    modal.frame = newFrame;
+    UIImageView *preview = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, modal.frame.size.width - 20, modal.frame.size.height - 20)];
+    preview.contentMode = UIViewContentModeScaleAspectFit;
+    preview.image = previewImage;
+    [modal addSubview:preview];
+    
+    // Add Play icon, if video doesn't.
+    
+    // Add Close button
 }
 
 -(void)addActivityIndicator {
@@ -206,7 +231,7 @@
 -(void)sendCardAsText {
     NSLog(@"Sending as Text");
     MFMessageComposeViewController *messageVC = [[MFMessageComposeViewController alloc] init];
-    NSLog(@"%hhd", [MFMessageComposeViewController respondsToSelector:@selector(canSendAttachments)]);
+//    NSLog(@"%hhd", [MFMessageComposeViewController respondsToSelector:@selector(canSendAttachments)]);
     if([MFMessageComposeViewController respondsToSelector:@selector(canSendAttachments)] ){
         if([MFMessageComposeViewController canSendAttachments]){
             NSString *filename = self.activeCard.staticCard;
