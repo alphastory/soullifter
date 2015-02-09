@@ -17,6 +17,10 @@
 		635ED5F11A7550B10022429A /* StoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 635ED5F01A7550B10022429A /* StoreViewController.m */; };
 		635ED5F41A7550C20022429A /* StoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = 635ED5F31A7550C20022429A /* StoreView.m */; };
 		635ED5F71A7550D10022429A /* StoreModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 635ED5F61A7550D10022429A /* StoreModel.m */; };
+		635FFDA31A884A1A00DC93FC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 635FFDA21A884A1A00DC93FC /* SystemConfiguration.framework */; };
+		635FFDA51A884A3500DC93FC /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 635FFDA41A884A3500DC93FC /* MobileCoreServices.framework */; };
+		635FFDA71A884A9D00DC93FC /* ContentfulDeliveryAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 635FFDA61A884A9D00DC93FC /* ContentfulDeliveryAPI.framework */; };
+		635FFDA91A885D2000DC93FC /* closeBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 635FFDA81A885D2000DC93FC /* closeBtn.png */; };
 		636217D31A80609700464A7E /* FavoriteHeart.png in Resources */ = {isa = PBXBuildFile; fileRef = 636217D21A80609700464A7E /* FavoriteHeart.png */; };
 		636A92D41A62E584003CA8C8 /* animated_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 636A92D01A62E584003CA8C8 /* animated_active.png */; };
 		636A92D51A62E584003CA8C8 /* favorites_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 636A92D11A62E584003CA8C8 /* favorites_active.png */; };
@@ -36,9 +40,6 @@
 		639681A21A5F97120086D74E /* SelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 639681A11A5F97120086D74E /* SelectionViewController.m */; };
 		639681A51A5F972E0086D74E /* SelectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 639681A41A5F972E0086D74E /* SelectionView.m */; };
 		639D4D881A6814810069E2B8 /* SelectionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 639D4D871A6814810069E2B8 /* SelectionModel.m */; };
-		63C26AE51A79B88600451FB6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C26AE41A79B88600451FB6 /* Security.framework */; };
-		63C26AE71A79B89300451FB6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C26AE61A79B89300451FB6 /* QuartzCore.framework */; };
-		63C26AED1A79CF4A00451FB6 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63C26AEC1A79CF4A00451FB6 /* DropboxSDK.framework */; };
 		63D959741A5F74F3001650C2 /* HomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63D959731A5F74F3001650C2 /* HomeView.m */; };
 		63D9597A1A5F82A1001650C2 /* newmarker.png in Resources */ = {isa = PBXBuildFile; fileRef = 63D959791A5F82A1001650C2 /* newmarker.png */; };
 		63D959821A5F82AE001650C2 /* cardOneFullCard.png in Resources */ = {isa = PBXBuildFile; fileRef = 63D9597C1A5F82AE001650C2 /* cardOneFullCard.png */; };
@@ -88,6 +89,10 @@
 		635ED5F31A7550C20022429A /* StoreView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreView.m; sourceTree = "<group>"; };
 		635ED5F51A7550D10022429A /* StoreModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreModel.h; sourceTree = "<group>"; };
 		635ED5F61A7550D10022429A /* StoreModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreModel.m; sourceTree = "<group>"; };
+		635FFDA21A884A1A00DC93FC /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		635FFDA41A884A3500DC93FC /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		635FFDA61A884A9D00DC93FC /* ContentfulDeliveryAPI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContentfulDeliveryAPI.framework; sourceTree = "<group>"; };
+		635FFDA81A885D2000DC93FC /* closeBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeBtn.png; sourceTree = "<group>"; };
 		636217D21A80609700464A7E /* FavoriteHeart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteHeart.png; sourceTree = "<group>"; };
 		636A92D01A62E584003CA8C8 /* animated_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = animated_active.png; sourceTree = "<group>"; };
 		636A92D11A62E584003CA8C8 /* favorites_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = favorites_active.png; sourceTree = "<group>"; };
@@ -119,7 +124,6 @@
 		639D4D871A6814810069E2B8 /* SelectionModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectionModel.m; sourceTree = "<group>"; };
 		63C26AE41A79B88600451FB6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		63C26AE61A79B89300451FB6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		63C26AEC1A79CF4A00451FB6 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
 		63D959721A5F74F3001650C2 /* HomeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeView.h; sourceTree = "<group>"; };
 		63D959731A5F74F3001650C2 /* HomeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeView.m; sourceTree = "<group>"; };
 		63D959761A5F828B001650C2 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Bold.ttf"; sourceTree = "<group>"; };
@@ -147,9 +151,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63C26AED1A79CF4A00451FB6 /* DropboxSDK.framework in Frameworks */,
-				63C26AE71A79B89300451FB6 /* QuartzCore.framework in Frameworks */,
-				63C26AE51A79B88600451FB6 /* Security.framework in Frameworks */,
+				635FFDA71A884A9D00DC93FC /* ContentfulDeliveryAPI.framework in Frameworks */,
+				635FFDA51A884A3500DC93FC /* MobileCoreServices.framework in Frameworks */,
+				635FFDA31A884A1A00DC93FC /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,7 +170,9 @@
 		631EA4FE1A5F72A8001DDF0C = {
 			isa = PBXGroup;
 			children = (
-				63C26AEC1A79CF4A00451FB6 /* DropboxSDK.framework */,
+				635FFDA61A884A9D00DC93FC /* ContentfulDeliveryAPI.framework */,
+				635FFDA41A884A3500DC93FC /* MobileCoreServices.framework */,
+				635FFDA21A884A1A00DC93FC /* SystemConfiguration.framework */,
 				63C26AE61A79B89300451FB6 /* QuartzCore.framework */,
 				63C26AE41A79B88600451FB6 /* Security.framework */,
 				631EA5091A5F72A8001DDF0C /* The Soul Lifter */,
@@ -474,6 +480,7 @@
 				63D959881A5F82B4001650C2 /* icons */,
 				63D9597B1A5F82A4001650C2 /* cards */,
 				63D959791A5F82A1001650C2 /* newmarker.png */,
+				635FFDA81A885D2000DC93FC /* closeBtn.png */,
 				636217D21A80609700464A7E /* FavoriteHeart.png */,
 			);
 			name = Images;
@@ -593,6 +600,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				635FFDA91A885D2000DC93FC /* closeBtn.png in Resources */,
 				636A92D81A62EB9D003CA8C8 /* Montserrat-Bold.ttf in Resources */,
 				636A92D91A62EB9D003CA8C8 /* Montserrat-Regular.ttf in Resources */,
 				636217D31A80609700464A7E /* FavoriteHeart.png in Resources */,

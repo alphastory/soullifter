@@ -7,22 +7,33 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Card.h"
+#import <ContentfulDeliveryAPI/ContentfulDeliveryAPI.h>
 
 @protocol StoreViewDelegate <NSObject>
 -(void)returnToHome;
+-(void)getProducts;
+-(void)purchaseCardWithIdentifier:(NSString*)identifier;
 @end
 
 @interface StoreView : UIView {
     UIColor *surfBlue;
     UIColor *whiteOpaque;
     UIFont *montserrat;
+    UIView *overlay;
+    UIView *modal;
+    UIButton *closeBtn;
+    UIButton *buyCard;
 }
 
 @property (assign, nonatomic) id <StoreViewDelegate> delegate;
 @property (strong, nonatomic) NSString *viewTitle;
 @property (strong, nonatomic) UIScrollView *cardsView;
 @property (strong, nonatomic) IBOutlet UIPageControl *cardsCount;
+@property (strong, nonatomic) UIActivityIndicatorView *indicator;
 @property (strong, nonatomic) NSMutableArray *allCards;
 @property (strong, nonatomic) NSDictionary *activeCard;
+
+-(void)addCardsToUIWithData:(NSMutableArray*)cardsList;
 
 @end

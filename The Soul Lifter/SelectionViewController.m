@@ -86,6 +86,7 @@
         // Update "Last Used" on active card
         NSDate *now = [NSDate date];
         self.selectionView.activeCard.lastUsed = now;
+        [self.model saveCardData];
     }
 }
 
@@ -99,6 +100,7 @@
         // Update "Last Used" on active card
         NSDate *now = [NSDate date];
         self.selectionView.activeCard.lastUsed = now;
+        [self.model saveCardData];
     }
 }
 

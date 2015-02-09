@@ -59,6 +59,7 @@
 }
 
 -(void)setCardDefaults {
+    NSLog(@"No Object For Key");
     self.data = [[NSMutableArray alloc] init];
     Card *cardOne = [[Card alloc] initWithName:@"Card One"];
     cardOne.staticCard = @"cardOneFullCard.png";
@@ -74,6 +75,9 @@
     cardThree.staticCard = @"cardThreeFullCard.png";
     cardThree.animatedCard = @"cardThreeFullCard.png";
     [self.data addObject:cardThree];
+    
+    // Check for purchased content
+    
     [self saveCardData];
 }
 
@@ -89,13 +93,16 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if([defaults objectForKey:@"cards"]){
         self.defaultData = [NSKeyedUnarchiver unarchiveObjectWithData:[defaults objectForKey:@"cards"]];
-        NSMutableArray *temp = [[NSMutableArray alloc] init];
-        for (Card *card in self.defaultData) {
-            [temp addObject:card];
+        if( [self.defaultData count] > 0){
+            NSMutableArray *temp = [[NSMutableArray alloc] init];
+            for (Card *card in self.defaultData) {
+                [temp addObject:card];
+            }
+            self.data = [[NSMutableArray alloc] initWithArray:temp];
+        } else {
+            [self setCardDefaults];
         }
-        self.data = [[NSMutableArray alloc] initWithArray:temp];
     } else {
-        NSLog(@"No Object For Key");
         [self setCardDefaults];
     }
 }

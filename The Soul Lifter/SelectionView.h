@@ -25,6 +25,9 @@
     UIColor *surfBlue;
     UIColor *whiteOpaque;
     UIFont *montserrat;
+    UIView *overlay;
+    UIView *modal;
+    UIButton *closeBtn;
 }
 
 @property (strong, nonatomic) NSString *viewTitle;

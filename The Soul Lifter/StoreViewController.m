@@ -33,6 +33,43 @@
 //    NSLog(@"Authorization Failed");
 //}
 
+-(void)purchaseCardWithIdentifier:(NSString *)identifier {
+    [self.storeModel getDataWithProductIdentifiers:identifier];
+}
+
+-(void)receivedDataFromModel:(NSArray *)products {
+//    NSLog(@"Received Products");
+//    NSLog(@"%@", products);
+//    [self listContent:products];
+    [self.storeView addCardsToUIWithData:products];
+    
+}
+
+-(void)listContent:(NSArray*)products {
+    for (SKProduct *product in products) {
+        if(product.downloadable){
+            NSMutableDictionary *info = [[NSMutableDictionary alloc] init];
+            info[@"price"] = product.price;
+            info[@"title"] = product.localizedTitle;
+            info[@"description"] = product.localizedDescription;
+            NSLog(@"%@", info);
+        }
+    }
+}
+
+-(void)sendCardsToView {
+    [self.storeView addCardsToUIWithData:self.storeModel.products];
+}
+
+-(void)getProducts {
+    if( [self.storeModel respondsToSelector:@selector(getDataWithProductIdentifiers:)]){
+        NSLog(@"Retrieving Products");
+        [self.storeModel getDataWithProductIdentifiers:@[]];
+        self.storeView.allCards = self.storeModel.products;
+    }
+    [self sendCardsToView];
+}
+
 - (void)returnToHome {
     [self dismissViewControllerAnimated:YES completion:nil];
 }

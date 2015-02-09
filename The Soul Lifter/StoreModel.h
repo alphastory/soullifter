@@ -8,16 +8,23 @@
 
 #import <Foundation/Foundation.h>
 #import "MattConnection.h"
+#import <StoreKit/StoreKit.h>
+#import <ContentfulDeliveryAPI/ContentfulDeliveryAPI.h>
+
 
 @protocol StoreModelDelegate <NSObject>
 @optional
--(void)receivedDataFromModel:(NSDictionary*)data;
+-(void)receivedDataFromModel:(NSArray *)products;
 @end
 
-@interface StoreModel : NSObject
+@interface StoreModel : NSObject <SKProductsRequestDelegate>
 
 @property (strong, nonatomic) id <StoreModelDelegate> delegate;
-@property (strong, nonatomic) NSMutableArray *collections;
+@property (strong, nonatomic) NSMutableArray *identifiers;
+@property (strong, nonatomic) NSMutableArray *products;
+@property (strong, nonatomic) SKProductsRequest *productsRequest;
+@property (strong, nonatomic) CDAClient *contentful;
 
+-(void)getDataWithProductIdentifiers:(NSString*)productIdentifier;
 
 @end

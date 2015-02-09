@@ -17,34 +17,19 @@
         surfBlue = [UIColor colorWithRed:99.0f/255.0f green:209.0f/255.0f blue:244.0f/255.0f alpha:1.0f];
         whiteOpaque = [UIColor colorWithWhite:1.0f alpha:0.5f];
         montserrat = [UIFont fontWithName:@"Montserrat-Bold" size:14.0f];
-        // Build NSDictionary of all "Recent Cards"
-        NSString *cardOneTitle = @"Card One";
-        NSString *cardOneType = @"public.image";
-        NSString *cardOneTitleCard = @"cardOneTitleCard.png";
-        NSString *cardOneFullCard = @"cardOneFullCard.png";
-        NSDictionary *cardOne = [[NSDictionary alloc] initWithObjects:@[cardOneTitle, cardOneType, cardOneTitleCard, cardOneFullCard] forKeys:@[@"Title", @"Type", @"Titlecard", @"Fullcard"]];
-
-        NSString *cardTwoTitle = @"Card Two";
-        NSString *cardTwoType = @"public.image";
-        NSString *cardTwoTitleCard = @"cardTwoTitleCard.png";
-        NSString *cardTwoFullCard = @"cardTwoFullCard.png";
-        NSDictionary *cardTwo = [[NSDictionary alloc] initWithObjects:@[cardTwoTitle, cardTwoType, cardTwoTitleCard, cardTwoFullCard] forKeys:@[@"Title", @"Type", @"Titlecard", @"Fullcard"]];
-
-        NSString *cardThreeTitle = @"Card Three";
-        NSString *cardThreeType = @"public.image";
-        NSString *cardThreeTitleCard = @"cardThreeTitleCard.png";
-        NSString *cardThreeFullCard = @"cardThreeFullCard.png";
-        NSDictionary *cardThree = [[NSDictionary alloc] initWithObjects:@[cardThreeTitle, cardThreeType, cardThreeTitleCard, cardThreeFullCard] forKeys:@[@"Title", @"Type", @"Titlecard", @"Fullcard"]];
-
-        self.allCards = [[NSMutableArray alloc] initWithObjects:cardOne, cardTwo, cardThree, nil];
-//        self.allCards = [[NSMutableArray alloc] init];
         [self buildView];
     }
     return self;
 }
 
--(void)buildView {CGFloat height = self.frame.size.height;
+#pragma mark Interface
+
+-(void)buildView {
+    
+    // Build the View
+    CGFloat height = self.frame.size.height;
     CGFloat width = self.frame.size.width;
+    
     // Add Title Bar
     UILabel *selectionTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, width, height * .1)];
     [selectionTitle setTextColor:[UIColor whiteColor]];
@@ -60,7 +45,9 @@
     self.cardsView.pagingEnabled = NO;
     self.cardsView.scrollEnabled = NO;
     [self addSubview:self.cardsView];
-    //    [self addCardsToUI];
+    
+    // Add Progress Indicator
+    [self addActivityIndicator];
     
     // Add the Page Control Indicators
     self.cardsCount = [[UIPageControl alloc] initWithFrame:CGRectMake(0, height - (height * .4), width, (height * .1) -1)];
@@ -72,26 +59,26 @@
     [self addSubview:self.cardsCount];
     
     // Send as Text Button
-    UIButton *sendAsText = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .3), width, (height * .1) - 1)];
-    [sendAsText setTitle:@"Buy this Card - $0.99" forState:UIControlStateNormal];
-    [sendAsText setBackgroundColor:surfBlue];
-    [sendAsText setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [[sendAsText titleLabel] setFont:montserrat];
-    [self addSubview:sendAsText];
+    buyCard = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .3), width, (height * .1) - 1)];
+    [buyCard setTitle:@"Buy Card" forState:UIControlStateNormal];
+    [buyCard setBackgroundColor:surfBlue];
+    [buyCard setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [[buyCard titleLabel] setFont:montserrat];
+    [self addSubview:buyCard];
     
-    // Add the Buy Action
-//    [sendAsText addTarget:self action:@selector(sendCardAsText) forControlEvents:UIControlEventTouchUpInside];
+    // Add the Send as Text Action
+    [buyCard addTarget:self action:@selector(buyCurrentCard) forControlEvents:UIControlEventTouchUpInside];
     
     // Send as Email Button
-    UIButton *sendAsEmail = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .2), width, (height * .1) - 1)];
-    [sendAsEmail setTitle:@"Buy this Collection - $4.99" forState:UIControlStateNormal];
-    [sendAsEmail setBackgroundColor:surfBlue];
-    [sendAsEmail setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [[sendAsEmail titleLabel] setFont:montserrat];
-    [self addSubview:sendAsEmail];
+    UIButton *buyCollection = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .2), width, (height * .1) - 1)];
+    [buyCollection setTitle:@"Buy Collection" forState:UIControlStateNormal];
+    [buyCollection setBackgroundColor:surfBlue];
+    [buyCollection setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [[buyCollection titleLabel] setFont:montserrat];
+    [self addSubview:buyCollection];
     
     // Add the Send as Email Action
-//    [sendAsEmail addTarget:self action:@selector(sendCardAsEmail) forControlEvents:UIControlEventTouchUpInside];
+    [buyCollection addTarget:self action:@selector(buyCurrentCollection) forControlEvents:UIControlEventTouchUpInside];
     
     // Add the Go Back Button
     UIButton *goBackButton = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .1), width, (height * .1))];
@@ -103,25 +90,32 @@
     
     // Add the Go Back Action
     [goBackButton addTarget:self action:@selector(goBackClicked) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.delegate getProducts];
 }
 
--(void)addCardsToUI {
-    //    UIColor *surfBlue = [UIColor colorWithRed:99.0f/255.0f green:209.0f/255.0f blue:244.0f/255.0f alpha:1.0f];
+-(void)buyCurrentCard {
+    NSLog(@"%@", self.activeCard);
+    [self.delegate purchaseCardWithIdentifier:self.activeCard[@"identifier"]];
+}
+
+-(void)buyCurrentCollection {
+    NSLog(@"Purchasing Current Collection");
+}
+
+-(void)addCardsToUIWithData:(NSMutableArray*)cardsList {
+    
+    self.allCards = [[NSMutableArray alloc] initWithArray:cardsList];
     self.cardsView.contentSize = CGSizeMake(((self.cardsView.frame.size.width - 80) * [self.allCards count]) + 80, self.cardsView.frame.size.height);
-    
-    NSLog(@"%@", self.allCards);
-    
     if([self.allCards count] > 0){
         
         CGRect frame;
         for( int i = 0; i < [self.allCards count]; i++){
             if([self.allCards objectAtIndex:i]){
                 NSDictionary *card = [self.allCards objectAtIndex:i];
-                //            NSString *cardTitle = [card objectForKey:@"Title"];
-                //            UIImage *fullcard = [card objectForKey:@"Fullcard"];
+                self.activeCard = card;
                 
                 // Make the view to put the card in.
-                //            frame.origin.x = (i == 0 ) ? 40 : (self.cardsView.frame.size.width * i) - (40 * i);
                 frame.origin.x = ((self.cardsView.frame.size.width - 40) * i) + 20;
                 frame.origin.y = 0;
                 frame.size.width = self.cardsView.frame.size.width - 40;
@@ -134,22 +128,18 @@
                 subview.backgroundColor = surfBlue;
                 [self.cardsView addSubview:subview];
                 
+                // Set the price
+                [buyCard setTitle:[NSString stringWithFormat:@"Buy Card - $%@", card[@"price"]] forState:UIControlStateNormal];
+                
                 // Get the current card.
-                NSURL *imagePath = [[NSURL alloc] initWithString:[card objectForKey:@"Titlecard"]];
-                NSData *imageData = [[NSData alloc] initWithContentsOfURL:imagePath];
+                NSURL *imageURL = [NSURL URLWithString:card[@"preview"]];
+                NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
                 UIImage *currentCard = [UIImage imageWithData:imageData];
-                UIImageView *currentCardView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, frame.size.width - 20, frame.size.height - 20)];
+//                UIImage *currentCard = [UIImage imageNamed:card.staticCard];
+                UIImageView *currentCardView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, subview.frame.size.width - 20, subview.frame.size.height - 20)];
                 currentCardView.contentMode = UIViewContentModeScaleAspectFill;
                 currentCardView.image = currentCard;
                 [subview addSubview:currentCardView];
-                
-                // If there is an object after this one, show it.
-                //            if([self.allCards objectAtIndex:(i + 1)]){
-                //                UIImage *nextCard = [[self.allCards objectAtIndex:(i + 1)] objectForKey:@"Titlecard"];
-                //                UIImageView *nextCardView = [[UIImageView alloc] initWithFrame:CGRectMake((frame.size.width - 20), 20, frame.size.width - 40, frame.size.height - 40)];
-                //                nextCardView.image = nextCard;
-                //                [subview addSubview:nextCardView];
-                //            }
             }
         }
         self.cardsCount.numberOfPages = [self.allCards count];
@@ -164,9 +154,86 @@
     swipeBackward.direction = UISwipeGestureRecognizerDirectionRight;
     [self.cardsView addGestureRecognizer:swipeBackward];
     
-    self.activeCard = [self.allCards objectAtIndex:0];
+    // Show the Preview Gesture
+    if( [self.allCards count] > 0 ){
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(playCardPreview)];
+        singleTap.numberOfTapsRequired = 1;
+        [self.cardsView addGestureRecognizer:singleTap];
+    }
+    
+    if( [self.allCards count] > 0 ){
+        self.activeCard = [self.allCards objectAtIndex:0];
+    } else {
+        UILabel *noCards = [[UILabel alloc] initWithFrame:CGRectMake(0, (self.cardsView.frame.size.height / 2) - 25, self.cardsView.frame.size.width, 50)];
+        noCards.text = @"No cards available for purchase.";
+        noCards.font = montserrat;
+        noCards.textColor = [UIColor grayColor];
+        noCards.textAlignment = NSTextAlignmentCenter;
+        [self.cardsView addSubview:noCards];
+    }
+    [self removeActivityIndicator];
 }
 
+-(void)playCardPreview {
+    NSLog(@"Playing Preview");
+    // Show modal view
+    overlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+    overlay.backgroundColor = [UIColor blackColor];
+    overlay.alpha = 0.4;
+    [self addSubview:overlay];
+    
+    modal = [[UIView alloc] initWithFrame:CGRectMake(20, 20, self.frame.size.width - 40, self.frame.size.height - 40)];
+    modal.backgroundColor = [UIColor whiteColor];
+    modal.contentMode = UIViewContentModeScaleAspectFit;
+    [self addSubview:modal];
+    
+    
+    NSString *url = [NSString stringWithFormat:@"http:%@", self.activeCard[@"preview"]];
+    NSURL *imageURL = [NSURL URLWithString:url];
+    NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
+    UIImage *previewImage = [UIImage imageWithData:imageData];
+    CGFloat imageWidth = previewImage.size.width;
+    CGFloat imageHeight = previewImage.size.height;
+    CGFloat aspect = imageWidth / imageHeight;
+    CGRect newFrame = CGRectMake(20, 40, self.frame.size.width - 40, (self.frame.size.height * aspect) - 50);
+    modal.frame = newFrame;
+    UIImageView *preview = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, modal.frame.size.width - 20, modal.frame.size.height - 20)];
+    preview.contentMode = UIViewContentModeScaleAspectFit;
+    preview.image = previewImage;
+    [modal addSubview:preview];
+    
+    // Add Play icon, if video doesn't.
+    
+    // Add Close button
+    closeBtn = [[UIButton alloc] initWithFrame:CGRectMake(modal.frame.size.width, 30, 30, 30)];
+    [closeBtn setImage:[UIImage imageNamed:@"closeBtn.png"] forState:UIControlStateNormal];
+    closeBtn.imageView.contentScaleFactor = 0.5f;
+    closeBtn.titleLabel.textColor = [UIColor blackColor];
+    closeBtn.backgroundColor = [UIColor whiteColor];
+    [self addSubview:closeBtn];
+    
+    UITapGestureRecognizer *closeModal = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeModalPreview)];
+    closeModal.numberOfTapsRequired = 1;
+    [closeBtn addGestureRecognizer:closeModal];
+}
+
+-(void)closeModalPreview {
+    [modal removeFromSuperview];
+    [overlay removeFromSuperview];
+    [closeBtn removeFromSuperview];
+}
+
+-(void)addActivityIndicator {
+    self.indicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake((self.cardsView.frame.size.width / 2) - 25, (self.cardsView.frame.size.height / 2) - 25, 50, 50)];
+    [self.indicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+    [self.indicator startAnimating];
+    [self.cardsView addSubview:self.indicator];
+}
+
+-(void)removeActivityIndicator {
+    [self.indicator stopAnimating];
+    [self.indicator removeFromSuperview];
+}
 #pragma mark Gesture Selectors
 
 // handle the swipes here
@@ -184,41 +251,31 @@
 }
 
 - (void)scrollBackOneCard {
-    NSLog(@"Scrolling back one card");
     if( self.cardsCount.currentPage - 1 >= 0){
         NSInteger page = self.cardsCount.currentPage - 1;
         self.activeCard = [self.allCards objectAtIndex:page];
         CGPoint destination = CGPointMake((self.cardsView.frame.size.width - 40) * page, 0);
         [self.cardsView setContentOffset:destination animated:YES];
         self.cardsCount.currentPage = page;
+        [buyCard setTitle:[NSString stringWithFormat:@"$%@", self.activeCard[@"price"]] forState:UIControlStateNormal];
     }
 }
 
 - (void)scrollForwardOneCard {
-    NSLog(@"Scrolling forward one card");
     if( self.cardsCount.currentPage + 1 < self.cardsCount.numberOfPages){
         NSInteger page = self.cardsCount.currentPage + 1;
         self.activeCard = [self.allCards objectAtIndex:page];
         CGPoint destination = CGPointMake((self.cardsView.frame.size.width - 40) * page, 0);
         [self.cardsView setContentOffset:destination animated:YES];
         self.cardsCount.currentPage = page;
+        [buyCard setTitle:[NSString stringWithFormat:@"$%@", self.activeCard[@"price"]] forState:UIControlStateNormal];
     }
 }
 
 #pragma mark Go Back
 
 -(void)goBackClicked {
-    NSLog(@"Go Back");
     [self.delegate returnToHome];
 }
-
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 @end

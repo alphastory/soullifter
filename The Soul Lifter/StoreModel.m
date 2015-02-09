@@ -13,30 +13,73 @@
 -(id)init {
     self = [super init];
     if(self){
-        self.collections = [[NSMutableArray alloc] init];
-        [self getData];
+        self.products = [[NSMutableArray alloc] init];
+        self.identifiers = [[NSMutableArray alloc] init];
+        
+        [self getProductIdentifiers];
     }
     return self;
 }
 
--(void)getData {
-    NSLog(@"Getting Data");
-    NSString *url = @"https://api.dropbox.com/1/metadata/auto/Soul%20Lifter/?list=true";
-    [MattConnection sendPostRequestToUrl:url payload:@{} withCallback:^(id json) {
-        NSMutableDictionary *db_cards = [[NSMutableDictionary alloc] init];
-        db_cards = json[@"contents"];
+-(void)getProductIdentifiers {
+    
+    self.contentful = [[CDAClient alloc] initWithSpaceKey:@"d9dwm1vmidcl"
+                                              accessToken:@"6369ecefd79aaa5f8771e338566e9e686e2bb761a54711e72762bd69284f80ce"];
+    
+    [self.contentful fetchEntriesWithSuccess:^(CDAResponse *response, CDAArray *array) {
+        for (CDAEntry *entry in array.items) {
+            NSString *identifier = [entry.fields objectForKey:@"identifier"];
+            [self.products addObject:entry.fields];
+            [self.identifiers addObject:identifier];
+        }
+        [self setupModelForViewWithCallback:^(NSArray *products) {
+            [self.delegate receivedDataFromModel:products];
+//            [self getDataWithProductIdentifiers:self.identifiers];
+        }];
+    } failure:^(CDAResponse *response, NSError *error) {
+        NSLog(@"Errors");
+        NSLog(@"%@", error);
     }];
 }
 
-- (void)setupModelForView:(NSDictionary*)cards withCallback:(void(^)(NSDictionary *json))callback {
-    NSString *apiPath = @"https://api.dropbox.com/1/metadata/auto/";
-    for (NSDictionary *card in cards) {
-        NSString *path = card[@"path"];
-        NSString *staticPath = [NSString stringWithFormat:@"%@/%@/static.png", apiPath, path];
-        NSString *animatedPath = [NSString stringWithFormat:@"%@/%@/animated.mp4", apiPath, path];
-        NSDictionary *tempCard = [[NSDictionary alloc] initWithObjects:@[staticPath, animatedPath] forKeys:@[@"static", @"animated"]];
-        [self.collections addObject:tempCard];
+#pragma mark SKProductRequestDelegate Protocol
+
+-(void)getDataWithProductIdentifiers:(NSString*)productIdentifier {
+    NSArray *productIdentifiers = [[NSArray alloc] initWithObjects:productIdentifier, nil];
+    self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithArray:productIdentifiers]];
+    self.productsRequest.delegate = self;
+    [self.productsRequest start];
+}
+
+-(void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    NSLog(@"%@", response.products);
+    for( NSString *invalidIdentifier in response.invalidProductIdentifiers ){
+        // Handle invalidities
+        NSLog(@"%@", invalidIdentifier);
     }
+}
+
+- (void)setupModelForViewWithCallback:(void(^)(NSArray *products))callback {
+    NSMutableArray *products = [[NSMutableArray alloc] init];
+    for (NSDictionary *card in self.products) {
+        NSMutableDictionary *product = [[NSMutableDictionary alloc] init];
+        // Get Preview Image
+        CDAAsset *previewAsset = card[@"preview"];
+        NSString *imageURL = [NSString stringWithFormat:@"http:%@", previewAsset.fields[@"file"][@"url"]];
+        
+        // Get Title
+        NSString *title = card[@"title"];
+        NSString *price = card[@"price"];
+        NSString *identifier = card[@"identifier"];
+        
+        [product setObject:title forKey:@"title"];
+        [product setObject:imageURL forKey:@"preview"];
+        [product setObject:price forKey:@"price"];
+        [product setObject:identifier forKey:@"identifier"];
+        
+        [products addObject:product];
+    }
+    callback(products);
 }
 
 @end

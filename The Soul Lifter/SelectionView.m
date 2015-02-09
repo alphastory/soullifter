@@ -120,7 +120,7 @@
                 
                 // Get the current card.
                 UIImage *currentCard = [UIImage imageNamed:card.staticCard];
-                UIImageView *currentCardView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, frame.size.width - 20, frame.size.height - 20)];
+                UIImageView *currentCardView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, subview.frame.size.width - 20, subview.frame.size.height - 20)];
                 currentCardView.contentMode = UIViewContentModeScaleAspectFill;
                 currentCardView.image = currentCard;
                 [subview addSubview:currentCardView];
@@ -187,16 +187,15 @@
 -(void)playCardPreview {
     NSLog(@"Playing Preview");
     // Show modal view
-    UIView *overlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+    overlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
     overlay.backgroundColor = [UIColor blackColor];
     overlay.alpha = 0.4;
     [self addSubview:overlay];
     
-    UIView *modal = [[UIView alloc] initWithFrame:CGRectMake(20, 20, self.frame.size.width - 40, self.frame.size.height - 40)];
+    modal = [[UIView alloc] initWithFrame:CGRectMake(20, 20, self.frame.size.width - 40, self.frame.size.height - 40)];
     modal.backgroundColor = [UIColor whiteColor];
     modal.contentMode = UIViewContentModeScaleAspectFit;
     [self addSubview:modal];
-    
 
     UIImage *previewImage = [UIImage imageNamed:self.activeCard.animatedCard];
     CGFloat imageWidth = previewImage.size.width;
@@ -212,6 +211,23 @@
     // Add Play icon, if video doesn't.
     
     // Add Close button
+    closeBtn = [[UIButton alloc] initWithFrame:CGRectMake(modal.frame.size.width, 30, 30, 30)];
+    [closeBtn setImage:[UIImage imageNamed:@"closeBtn.png"] forState:UIControlStateNormal];
+    closeBtn.imageView.contentMode = UIViewContentModeScaleAspectFill;
+    closeBtn.titleLabel.textColor = [UIColor blackColor];
+    closeBtn.titleLabel.hidden = YES;
+    closeBtn.backgroundColor = [UIColor whiteColor];
+    [self addSubview:closeBtn];
+    
+    UITapGestureRecognizer *closeModal = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeModalPreview)];
+    closeModal.numberOfTapsRequired = 1;
+    [closeBtn addGestureRecognizer:closeModal];
+}
+
+-(void)closeModalPreview {
+    [modal removeFromSuperview];
+    [overlay removeFromSuperview];
+    [closeBtn removeFromSuperview];
 }
 
 -(void)addActivityIndicator {

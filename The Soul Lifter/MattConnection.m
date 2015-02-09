@@ -17,7 +17,7 @@
                                                        timeoutInterval:120.0];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [request setValue:@"Bearer TBs6nIYK72YAAAAAAAAHHieh24T27hDZ7ZadFDOopaeZztCNDBZ7SJaeG2EnSvRB" forHTTPHeaderField:@"Authorization"];
+    [request setValue:@"Bearer 6369ecefd79aaa5f8771e338566e9e686e2bb761a54711e72762bd69284f80ce" forHTTPHeaderField:@"Authorization"];
     [request setHTTPMethod:@"POST"];
     NSData *payloadData = [NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:&error];
     request.HTTPBody = payloadData;
@@ -30,7 +30,7 @@
                                                        timeoutInterval:120.0];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [request setValue:@"Bearer TBs6nIYK72YAAAAAAAAHHieh24T27hDZ7ZadFDOopaeZztCNDBZ7SJaeG2EnSvRB" forHTTPHeaderField:@"Authorization"];
+    [request setValue:@"Bearer 6369ecefd79aaa5f8771e338566e9e686e2bb761a54711e72762bd69284f80ce" forHTTPHeaderField:@"Authorization"];
     [request setHTTPMethod:@"GET"];
     [MattConnection sendRequest:request withCallback:callback];
 }
