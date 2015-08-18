@@ -188,13 +188,20 @@
     [self addSubview:modal];
     
     
-    NSString *url = [NSString stringWithFormat:@"http:%@", self.activeCard[@"preview"]];
+//    NSString *url = [NSString stringWithFormat:@"http:%@", self.activeCard[@"preview"]];
+    NSString *url = [NSString stringWithFormat:@"%@", self.activeCard[@"preview"]];
     NSURL *imageURL = [NSURL URLWithString:url];
     NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
     UIImage *previewImage = [UIImage imageWithData:imageData];
     CGFloat imageWidth = previewImage.size.width;
     CGFloat imageHeight = previewImage.size.height;
     CGFloat aspect = imageWidth / imageHeight;
+    
+    if(isnan(aspect))
+    {   
+        aspect = 0;
+    }
+    
     CGRect newFrame = CGRectMake(20, 40, self.frame.size.width - 40, (self.frame.size.height * aspect) - 50);
     modal.frame = newFrame;
     UIImageView *preview = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, modal.frame.size.width - 20, modal.frame.size.height - 20)];

@@ -55,7 +55,7 @@
     NSLog(@"%@", response.products);
     for( NSString *invalidIdentifier in response.invalidProductIdentifiers ){
         // Handle invalidities
-        NSLog(@"%@", invalidIdentifier);
+        NSLog(@"invalid products %@", invalidIdentifier);
     }
 }
 

@@ -31,6 +31,7 @@
         self.title = [decoder decodeObjectForKey:@"title"];
         self.staticCard = [decoder decodeObjectForKey:@"static"];
         self.animatedCard = [decoder decodeObjectForKey:@"animated"];
+        NSLog(@"%@", self.animatedCard);
         self.lastUsed = [decoder decodeObjectForKey:@"lastUsed"];
         self.favorite = [decoder decodeBoolForKey:@"favorite"];
     }
