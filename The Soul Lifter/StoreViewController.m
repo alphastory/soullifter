@@ -27,6 +27,7 @@
     self.storeView.delegate = self;
     
     self.view = self.storeView;
+    [self.storeView buildView];
 }
 //
 //- (void)sessionDidReceiveAuthorizationFailure:(DBSession *)session userId:(NSString *)userId {

@@ -71,11 +71,14 @@
         NSString *title = card[@"title"];
         NSString *price = card[@"price"];
         NSString *identifier = card[@"identifier"];
+        BOOL animated = [[[imageURL lowercaseString] pathExtension] isEqualToString:@"mp4"];
+        
         
         [product setObject:title forKey:@"title"];
         [product setObject:imageURL forKey:@"preview"];
         [product setObject:price forKey:@"price"];
         [product setObject:identifier forKey:@"identifier"];
+        [product setObject:@(animated) forKey:@"animated"];
         
         [products addObject:product];
     }

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Card.h"
 #import <ContentfulDeliveryAPI/ContentfulDeliveryAPI.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 @protocol StoreViewDelegate <NSObject>
 -(void)returnToHome;
@@ -24,6 +25,8 @@
     UIView *modal;
     UIButton *closeBtn;
     UIButton *buyCard;
+    MPMoviePlayerController *moviePlayer;
+    BOOL isLoadingPreview;
 }
 
 @property (assign, nonatomic) id <StoreViewDelegate> delegate;
@@ -31,9 +34,11 @@
 @property (strong, nonatomic) UIScrollView *cardsView;
 @property (strong, nonatomic) IBOutlet UIPageControl *cardsCount;
 @property (strong, nonatomic) UIActivityIndicatorView *indicator;
+@property (strong, nonatomic) UIActivityIndicatorView *videoIndicator;
 @property (strong, nonatomic) NSMutableArray *allCards;
 @property (strong, nonatomic) NSDictionary *activeCard;
 
+-(void)buildView;
 -(void)addCardsToUIWithData:(NSMutableArray*)cardsList;
 
 @end

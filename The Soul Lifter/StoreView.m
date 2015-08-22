@@ -8,6 +8,7 @@
 
 #import "StoreView.h"
 
+
 @implementation StoreView
 
 -(id)initWithFrame:(CGRect)frame{
@@ -17,7 +18,7 @@
         surfBlue = [UIColor colorWithRed:99.0f/255.0f green:209.0f/255.0f blue:244.0f/255.0f alpha:1.0f];
         whiteOpaque = [UIColor colorWithWhite:1.0f alpha:0.5f];
         montserrat = [UIFont fontWithName:@"Montserrat-Bold" size:14.0f];
-        [self buildView];
+
     }
     return self;
 }
@@ -91,7 +92,7 @@
     // Add the Go Back Action
     [goBackButton addTarget:self action:@selector(goBackClicked) forControlEvents:UIControlEventTouchUpInside];
     
-    [self.delegate getProducts];
+//    [self.delegate getProducts];
 }
 
 -(void)buyCurrentCard {
@@ -133,8 +134,22 @@
                 
                 // Get the current card.
                 NSURL *imageURL = [NSURL URLWithString:card[@"preview"]];
-                NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
-                UIImage *currentCard = [UIImage imageWithData:imageData];
+                
+              
+                UIImage *currentCard = nil;
+                
+                if([card[@"animated"]boolValue])
+                {
+                    //we need a static image for an animation card type
+//                    NSData *imageData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"http://images.contentful.com/d9dwm1vmidcl/34Xz9dPXzGeMoSSeOSgK48/8b6f378cd28629416e48e6adfeaf5abf/static.png"]];
+//                    currentCard = [UIImage imageWithData:imageData];
+                }
+                else{
+                    NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
+                    currentCard = [UIImage imageWithData:imageData];
+                }
+                
+
 //                UIImage *currentCard = [UIImage imageNamed:card.staticCard];
                 UIImageView *currentCardView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, subview.frame.size.width - 20, subview.frame.size.height - 20)];
                 currentCardView.contentMode = UIViewContentModeScaleAspectFill;
@@ -177,54 +192,168 @@
 -(void)playCardPreview {
     NSLog(@"Playing Preview");
     // Show modal view
-    overlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-    overlay.backgroundColor = [UIColor blackColor];
-    overlay.alpha = 0.4;
+    
+    if(!overlay){
+        overlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+        overlay.backgroundColor = [UIColor blackColor];
+        overlay.alpha = 0.4;
+    }
     [self addSubview:overlay];
     
-    modal = [[UIView alloc] initWithFrame:CGRectMake(20, 20, self.frame.size.width - 40, self.frame.size.height - 40)];
-    modal.backgroundColor = [UIColor whiteColor];
-    modal.contentMode = UIViewContentModeScaleAspectFit;
+    if(!modal){
+        modal = [[UIView alloc] initWithFrame:CGRectMake(20, 20, self.frame.size.width - 40, self.frame.size.height - 40)];
+        modal.backgroundColor = [UIColor whiteColor];
+        modal.contentMode = UIViewContentModeScaleAspectFit;
+    }
     [self addSubview:modal];
-    
     
 //    NSString *url = [NSString stringWithFormat:@"http:%@", self.activeCard[@"preview"]];
     NSString *url = [NSString stringWithFormat:@"%@", self.activeCard[@"preview"]];
-    NSURL *imageURL = [NSURL URLWithString:url];
-    NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
-    UIImage *previewImage = [UIImage imageWithData:imageData];
-    CGFloat imageWidth = previewImage.size.width;
-    CGFloat imageHeight = previewImage.size.height;
-    CGFloat aspect = imageWidth / imageHeight;
-    
-    if(isnan(aspect))
-    {   
-        aspect = 0;
+    if([self.activeCard[@"animated"]boolValue]){
+     
+        [self tearDownMoviePlayer];
+        
+        isLoadingPreview = YES;
+        
+        self.videoIndicator = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        [modal addSubview:self.videoIndicator];
+        self.videoIndicator.center = CGPointMake(modal.frame.size.width/2, modal.frame.size.height/2);
+        [self.videoIndicator startAnimating];
+        
+        moviePlayer = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL URLWithString:url]];
+        
+        moviePlayer.view.frame = CGRectMake(0, 0, 480, 320);
+        [moviePlayer setControlStyle:MPMovieControlStyleNone];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(moviePlayBackDidFinish:)
+                                                     name:MPMoviePlayerPlaybackDidFinishNotification
+                                                   object:moviePlayer];
+
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(movieNetworkStateDidChange:)
+                                                     name:MPMoviePlayerLoadStateDidChangeNotification
+                                                   object:moviePlayer];
+        
+        moviePlayer.shouldAutoplay = YES;
+        [moviePlayer play];
+        
+    }
+    else{
+        NSURL *imageURL = [NSURL URLWithString:url];
+        NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
+        UIImage *previewImage = [UIImage imageWithData:imageData];
+        CGFloat imageWidth = previewImage.size.width;
+        CGFloat imageHeight = previewImage.size.height;
+        CGFloat aspect = imageWidth / imageHeight;
+        
+        if(isnan(aspect))
+        {
+            aspect = 0;
+        }
+        
+        CGRect newFrame = CGRectMake(20, 40, self.frame.size.width - 40, (self.frame.size.height * aspect) - 50);
+        modal.frame = newFrame;
+        UIImageView *preview = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, modal.frame.size.width - 20, modal.frame.size.height - 20)];
+        preview.contentMode = UIViewContentModeScaleAspectFit;
+        preview.image = previewImage;
+        [modal addSubview:preview];
     }
     
-    CGRect newFrame = CGRectMake(20, 40, self.frame.size.width - 40, (self.frame.size.height * aspect) - 50);
-    modal.frame = newFrame;
-    UIImageView *preview = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, modal.frame.size.width - 20, modal.frame.size.height - 20)];
-    preview.contentMode = UIViewContentModeScaleAspectFit;
-    preview.image = previewImage;
-    [modal addSubview:preview];
+ 
     
     // Add Play icon, if video doesn't.
     
     // Add Close button
-    closeBtn = [[UIButton alloc] initWithFrame:CGRectMake(modal.frame.size.width, 30, 30, 30)];
-    [closeBtn setImage:[UIImage imageNamed:@"closeBtn.png"] forState:UIControlStateNormal];
-    closeBtn.imageView.contentScaleFactor = 0.5f;
-    closeBtn.titleLabel.textColor = [UIColor blackColor];
-    closeBtn.backgroundColor = [UIColor whiteColor];
+    if(!closeBtn){
+        closeBtn = [[UIButton alloc] initWithFrame:CGRectMake(modal.frame.size.width, 30, 30, 30)];
+        [closeBtn setImage:[UIImage imageNamed:@"closeBtn.png"] forState:UIControlStateNormal];
+        closeBtn.imageView.contentScaleFactor = 0.5f;
+        closeBtn.titleLabel.textColor = [UIColor blackColor];
+        closeBtn.backgroundColor = [UIColor whiteColor];
+        [closeBtn addTarget:self action:@selector(closeModalPreview) forControlEvents:UIControlEventTouchUpInside];
+    }
+    
     [self addSubview:closeBtn];
     
-    UITapGestureRecognizer *closeModal = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeModalPreview)];
-    closeModal.numberOfTapsRequired = 1;
-    [closeBtn addGestureRecognizer:closeModal];
+//    UITapGestureRecognizer *closeModal = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeModalPreview)];
+//    closeModal.numberOfTapsRequired = 1;
+//    [closeBtn addGestureRecognizer:closeModal];
 }
 
+-(void) moviePlayBackDidFinish:(NSNotification*)notification {
+    //repeat movie
+    [moviePlayer play];
+}
+
+-(void) movieNetworkStateDidChange:(NSNotification*)notification
+{
+//    NSLog(@"load state: %lu",(unsigned long)moviePlayer.loadState);
+    if(isLoadingPreview){
+        if(moviePlayer.loadState == MPMovieLoadStatePlayable)
+        {
+            isLoadingPreview = NO;
+            //the video is loaded, so now we know it's width and height, it's "naturalSize"
+            CGRect newFrame = CGRectInset(self.frame, 20, 40);
+            
+            newFrame.size = [self CGSizeAspectFit:moviePlayer.naturalSize boundingSize:newFrame.size];
+
+            [moviePlayer play];
+            modal.frame = CGRectInset(newFrame,-10,-10);
+            [modal addSubview:moviePlayer.view];
+            moviePlayer.view.frame = CGRectMake(10,10,newFrame.size.width, newFrame.size.height);
+        }
+        else if(moviePlayer.loadState == MPMovieLoadStateStalled || moviePlayer.loadState == MPMovieLoadStateUnknown)
+        {
+            isLoadingPreview = NO;
+            [self closeModalPreview];
+            [self doAlert:@"Could not play the card preview."];
+        }
+    }
+}
+
+
+-(CGSize) CGSizeAspectFit:(CGSize)aspectRatio boundingSize:(CGSize)boundingSize
+{
+    CGFloat mW = boundingSize.width / aspectRatio.width;
+    CGFloat mH = boundingSize.height / aspectRatio.height;
+    
+    CGSize output = CGSizeMake(boundingSize.width, boundingSize.height);
+    
+    if( mH < mW ){
+        output.width = boundingSize.height / aspectRatio.height * aspectRatio.width;
+    }
+    else if( mW < mH )
+    {
+        output.height = boundingSize.width / aspectRatio.width * aspectRatio.height;
+    }
+    return output;
+}
+
+-(void)tearDownMoviePlayer
+{
+    if(moviePlayer != nil){
+        [moviePlayer stop];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:moviePlayer];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerLoadStateDidChangeNotification object:moviePlayer];
+        [moviePlayer.view removeFromSuperview];
+        moviePlayer = nil;
+        
+        [self.videoIndicator stopAnimating];
+        [self.videoIndicator removeFromSuperview];
+        self.videoIndicator = nil;
+    }
+}
+
+-(void)doAlert:(NSString*)message
+{
+    [[[UIAlertView alloc]initWithTitle:@"" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil]show];
+}
+
+
 -(void)closeModalPreview {
+    [self tearDownMoviePlayer];
     [modal removeFromSuperview];
     [overlay removeFromSuperview];
     [closeBtn removeFromSuperview];

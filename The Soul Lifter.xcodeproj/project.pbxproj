@@ -57,6 +57,8 @@
 		63D959971A5F82BD001650C2 /* static.png in Resources */ = {isa = PBXBuildFile; fileRef = 63D9598F1A5F82BD001650C2 /* static.png */; };
 		63D959981A5F82BD001650C2 /* store.png in Resources */ = {isa = PBXBuildFile; fileRef = 63D959901A5F82BD001650C2 /* store.png */; };
 		63E0A8411A62DEFB00C229B2 /* recents_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 63E0A8401A62DEFA00C229B2 /* recents_active.png */; };
+		AC0A6C2D1B86D37E0066586A /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC0A6C2C1B86D37E0066586A /* MediaPlayer.framework */; };
+		AC34AAC71B82DAD30055471A /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC34AAC61B82DAD30055471A /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -144,6 +146,8 @@
 		63D9598F1A5F82BD001650C2 /* static.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = static.png; sourceTree = "<group>"; };
 		63D959901A5F82BD001650C2 /* store.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = store.png; sourceTree = "<group>"; };
 		63E0A8401A62DEFA00C229B2 /* recents_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recents_active.png; sourceTree = "<group>"; };
+		AC0A6C2C1B86D37E0066586A /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		AC34AAC61B82DAD30055471A /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,9 +155,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC0A6C2D1B86D37E0066586A /* MediaPlayer.framework in Frameworks */,
 				635FFDA71A884A9D00DC93FC /* ContentfulDeliveryAPI.framework in Frameworks */,
 				635FFDA51A884A3500DC93FC /* MobileCoreServices.framework in Frameworks */,
 				635FFDA31A884A1A00DC93FC /* SystemConfiguration.framework in Frameworks */,
+				AC34AAC71B82DAD30055471A /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,6 +176,8 @@
 		631EA4FE1A5F72A8001DDF0C = {
 			isa = PBXGroup;
 			children = (
+				AC0A6C2C1B86D37E0066586A /* MediaPlayer.framework */,
+				AC34AAC61B82DAD30055471A /* StoreKit.framework */,
 				635FFDA61A884A9D00DC93FC /* ContentfulDeliveryAPI.framework */,
 				635FFDA41A884A3500DC93FC /* MobileCoreServices.framework */,
 				635FFDA21A884A1A00DC93FC /* SystemConfiguration.framework */,
@@ -568,7 +576,12 @@
 				TargetAttributes = {
 					631EA5061A5F72A8001DDF0C = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = CB8A2UT3FF;
+						DevelopmentTeam = 6KU6L6C7VZ;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
 					};
 					631EA51F1A5F72A9001DDF0C = {
 						CreatedOnToolsVersion = 6.1.1;
