@@ -35,15 +35,7 @@
 //}
 
 -(void)purchaseCardWithIdentifier:(NSString *)identifier {
-    [self.storeModel getDataWithProductIdentifiers:identifier];
-}
-
--(void)receivedDataFromModel:(NSArray *)products {
-//    NSLog(@"Received Products");
-//    NSLog(@"%@", products);
-//    [self listContent:products];
-    [self.storeView addCardsToUIWithData:products];
-    
+    [self.storeModel buyCard:identifier];
 }
 
 -(void)listContent:(NSArray*)products {
@@ -72,6 +64,7 @@
 }
 
 - (void)returnToHome {
+    [self.storeModel unload];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -79,6 +72,56 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+-(void)doAlert:(NSString*)message
+{
+    [[[UIAlertView alloc]initWithTitle:@"" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil]show];
+}
+
+#pragma mark - StoreViewDelegate
+-(void)purchaseComplete
+{
+    [self.storeModel transactionResolved];
+}
+
+#pragma mark - StoreModelDelegate
+-(void)receivedDataFromModel:(NSArray *)products {
+    //    NSLog(@"Received Products");
+    //    NSLog(@"%@", products);
+    //    [self listContent:products];
+    [self.storeView addCardsToUIWithData:products];
+}
+
+-(void)purchaseStateAlreadyPurchased
+{
+    [self.storeView alreadyPurchased];
+}
+
+-(void)purchaseStatePurchasing
+{
+    [self.storeView updatePurchaseStatus:@"Purchasing" isDone:NO];
+}
+
+-(void)purchaseStatePurchased
+{
+    [self.storeView updatePurchaseStatus:@"Purchased Successfully!" isDone:YES];
+}
+
+-(void)purchaseStateFailed
+{
+    [self.storeView updatePurchaseStatus:@"Purchase Failed" isDone:YES];
+}
+
+-(void)purchaseStateDeferred
+{
+    [self.storeView updatePurchaseStatus:@"Purchase Deferred" isDone:YES];
+}
+
+-(void)purchaseStateRestored
+{
+    [self.storeView updatePurchaseStatus:@"Purchase Restored" isDone:YES];
+}
+
 
 /*
 #pragma mark - Navigation

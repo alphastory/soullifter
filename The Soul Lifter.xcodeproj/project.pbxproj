@@ -58,7 +58,9 @@
 		63D959981A5F82BD001650C2 /* store.png in Resources */ = {isa = PBXBuildFile; fileRef = 63D959901A5F82BD001650C2 /* store.png */; };
 		63E0A8411A62DEFB00C229B2 /* recents_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 63E0A8401A62DEFA00C229B2 /* recents_active.png */; };
 		AC0A6C2D1B86D37E0066586A /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC0A6C2C1B86D37E0066586A /* MediaPlayer.framework */; };
-		AC34AAC71B82DAD30055471A /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC34AAC61B82DAD30055471A /* StoreKit.framework */; };
+		AC7AF55A1B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = AC7AF5591B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m */; };
+		AC7AF55B1B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = AC7AF5591B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m */; };
+		ACF0C0C81B88202E00469395 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACF0C0C71B88202E00469395 /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,7 +149,9 @@
 		63D959901A5F82BD001650C2 /* store.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = store.png; sourceTree = "<group>"; };
 		63E0A8401A62DEFA00C229B2 /* recents_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recents_active.png; sourceTree = "<group>"; };
 		AC0A6C2C1B86D37E0066586A /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
-		AC34AAC61B82DAD30055471A /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		AC7AF5581B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUserDefaults+NSUserDefaults.h"; sourceTree = "<group>"; };
+		AC7AF5591B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+NSUserDefaults.m"; sourceTree = "<group>"; };
+		ACF0C0C71B88202E00469395 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,9 +161,9 @@
 			files = (
 				AC0A6C2D1B86D37E0066586A /* MediaPlayer.framework in Frameworks */,
 				635FFDA71A884A9D00DC93FC /* ContentfulDeliveryAPI.framework in Frameworks */,
+				ACF0C0C81B88202E00469395 /* StoreKit.framework in Frameworks */,
 				635FFDA51A884A3500DC93FC /* MobileCoreServices.framework in Frameworks */,
 				635FFDA31A884A1A00DC93FC /* SystemConfiguration.framework in Frameworks */,
-				AC34AAC71B82DAD30055471A /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,8 +180,8 @@
 		631EA4FE1A5F72A8001DDF0C = {
 			isa = PBXGroup;
 			children = (
+				ACF0C0C71B88202E00469395 /* StoreKit.framework */,
 				AC0A6C2C1B86D37E0066586A /* MediaPlayer.framework */,
-				AC34AAC61B82DAD30055471A /* StoreKit.framework */,
 				635FFDA61A884A9D00DC93FC /* ContentfulDeliveryAPI.framework */,
 				635FFDA41A884A3500DC93FC /* MobileCoreServices.framework */,
 				635FFDA21A884A1A00DC93FC /* SystemConfiguration.framework */,
@@ -201,6 +205,7 @@
 		631EA5091A5F72A8001DDF0C /* The Soul Lifter */ = {
 			isa = PBXGroup;
 			children = (
+				AC7AF5571B8C1BE500160BE1 /* Utils */,
 				635ED5EE1A75502F0022429A /* Store */,
 				639681981A5F90550086D74E /* Card */,
 				63D959781A5F8292001650C2 /* Images */,
@@ -527,6 +532,15 @@
 			name = icons;
 			sourceTree = "<group>";
 		};
+		AC7AF5571B8C1BE500160BE1 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				AC7AF5581B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.h */,
+				AC7AF5591B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -669,6 +683,7 @@
 				631EA50D1A5F72A8001DDF0C /* main.m in Sources */,
 				639681A51A5F972E0086D74E /* SelectionView.m in Sources */,
 				636A92FB1A62F225003CA8C8 /* AboutViewController.m in Sources */,
+				AC7AF55A1B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m in Sources */,
 				635ED5F11A7550B10022429A /* StoreViewController.m in Sources */,
 				635ED5F71A7550D10022429A /* StoreModel.m in Sources */,
 				636A92F11A62F1E1003CA8C8 /* SettingsView.m in Sources */,
@@ -684,6 +699,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				631EA5271A5F72A9001DDF0C /* The_Soul_LifterTests.m in Sources */,
+				AC7AF55B1B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

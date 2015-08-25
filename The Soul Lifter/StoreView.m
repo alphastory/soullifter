@@ -97,6 +97,23 @@
 
 -(void)buyCurrentCard {
     NSLog(@"%@", self.activeCard);
+    
+    //show purchasing UI
+    if(!purchasingSpinner){
+        purchasingSpinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+        purchasingSpinner.center = CGPointMake(buyCard.frame.origin.x + buyCard.frame.size.width - (purchasingSpinner.bounds.size.width + 15), buyCard.center.y);
+        [self addSubview:purchasingSpinner];
+    }
+    [purchasingSpinner startAnimating];
+    
+//    purchasingView = (PurchasingView*)[[NSBundle mainBundle]loadNibNamed:@"PurchasingView" owner:nil options:nil][0];
+//    purchasingView.delegate = self;
+
+//    [self addSubview:purchasingView];
+//    purchasingView.center = self.center;
+    
+//    [purchasingView beginPurchasing];
+    
     [self.delegate purchaseCardWithIdentifier:self.activeCard[@"identifier"]];
 }
 
@@ -135,21 +152,9 @@
                 // Get the current card.
                 NSURL *imageURL = [NSURL URLWithString:card[@"preview"]];
                 
-              
-                UIImage *currentCard = nil;
+                NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
+                UIImage *currentCard = [UIImage imageWithData:imageData];
                 
-                if([card[@"animated"]boolValue])
-                {
-                    //we need a static image for an animation card type
-//                    NSData *imageData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"http://images.contentful.com/d9dwm1vmidcl/34Xz9dPXzGeMoSSeOSgK48/8b6f378cd28629416e48e6adfeaf5abf/static.png"]];
-//                    currentCard = [UIImage imageWithData:imageData];
-                }
-                else{
-                    NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
-                    currentCard = [UIImage imageWithData:imageData];
-                }
-                
-
 //                UIImage *currentCard = [UIImage imageNamed:card.staticCard];
                 UIImageView *currentCardView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, subview.frame.size.width - 20, subview.frame.size.height - 20)];
                 currentCardView.contentMode = UIViewContentModeScaleAspectFill;
@@ -208,9 +213,11 @@
     [self addSubview:modal];
     
 //    NSString *url = [NSString stringWithFormat:@"http:%@", self.activeCard[@"preview"]];
-    NSString *url = [NSString stringWithFormat:@"%@", self.activeCard[@"preview"]];
+
     if([self.activeCard[@"animated"]boolValue]){
      
+        NSString *url = [NSString stringWithFormat:@"%@", self.activeCard[@"animatedPreview"]];
+        
         [self tearDownMoviePlayer];
         
         isLoadingPreview = YES;
@@ -241,6 +248,7 @@
         
     }
     else{
+        NSString *url = [NSString stringWithFormat:@"%@", self.activeCard[@"preview"]];
         NSURL *imageURL = [NSURL URLWithString:url];
         NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
         UIImage *previewImage = [UIImage imageWithData:imageData];
@@ -334,9 +342,9 @@
 -(void)tearDownMoviePlayer
 {
     if(moviePlayer != nil){
-        [moviePlayer stop];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:moviePlayer];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerLoadStateDidChangeNotification object:moviePlayer];
+        [moviePlayer stop];
         [moviePlayer.view removeFromSuperview];
         moviePlayer = nil;
         
@@ -354,6 +362,9 @@
 
 -(void)closeModalPreview {
     [self tearDownMoviePlayer];
+    
+    [modal.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
     [modal removeFromSuperview];
     [overlay removeFromSuperview];
     [closeBtn removeFromSuperview];
@@ -406,6 +417,42 @@
         self.cardsCount.currentPage = page;
         [buyCard setTitle:[NSString stringWithFormat:@"$%@", self.activeCard[@"price"]] forState:UIControlStateNormal];
     }
+}
+
+#pragma mark pruchaseUIMethods
+-(void)alreadyPurchased
+{
+    [purchasingSpinner stopAnimating];
+    [self doAlert:@"This card has already been purchased"];
+}
+
+-(void)updatePurchaseStatus:(NSString*)status isDone:(BOOL)isDone
+{
+//    [purchasingView updatePurchaseState:status];
+    
+    if(isDone)
+    {
+        [purchasingSpinner stopAnimating];
+        [self transactionEnd];
+    }
+}
+
+#pragma mark - PurchasingViewDelegate
+//-(void)userDidDismissPurchasingView
+//{
+//    [self transactionEnd];
+//}
+//
+//-(void)userDidCancelPurchase
+//{
+//    [self userDidDismissPurchasingView];
+//    
+//    //TODO: see if we can cancel a transaction
+//}
+
+-(void)transactionEnd
+{
+    [_delegate purchaseComplete];
 }
 
 #pragma mark Go Back

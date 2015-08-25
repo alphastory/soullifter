@@ -10,11 +10,14 @@
 #import "Card.h"
 #import <ContentfulDeliveryAPI/ContentfulDeliveryAPI.h>
 #import <MediaPlayer/MediaPlayer.h>
+//#import "PurchasingView.h"
 
 @protocol StoreViewDelegate <NSObject>
 -(void)returnToHome;
 -(void)getProducts;
 -(void)purchaseCardWithIdentifier:(NSString*)identifier;
+-(void)purchaseComplete;
+-(void)alreadyPurchased;
 @end
 
 @interface StoreView : UIView {
@@ -27,6 +30,10 @@
     UIButton *buyCard;
     MPMoviePlayerController *moviePlayer;
     BOOL isLoadingPreview;
+    
+    UIActivityIndicatorView *purchasingSpinner;
+    
+//    PurchasingView *purchasingView;
 }
 
 @property (assign, nonatomic) id <StoreViewDelegate> delegate;
@@ -40,5 +47,6 @@
 
 -(void)buildView;
 -(void)addCardsToUIWithData:(NSMutableArray*)cardsList;
-
+-(void)updatePurchaseStatus:(NSString*)status isDone:(BOOL)isDone;
+-(void)alreadyPurchased;
 @end

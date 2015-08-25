@@ -13,11 +13,23 @@
 
 
 @protocol StoreModelDelegate <NSObject>
+
+-(void)purchaseStatePurchasing;
+-(void)purchaseStateDeferred;
+-(void)purchaseStateFailed;
+-(void)purchaseStatePurchased;
+-(void)purchaseStateRestored;
+-(void)purchaseStateAlreadyPurchased;
+
 @optional
 -(void)receivedDataFromModel:(NSArray *)products;
 @end
 
-@interface StoreModel : NSObject <SKProductsRequestDelegate>
+@interface StoreModel : NSObject <SKProductsRequestDelegate,SKPaymentTransactionObserver>
+{
+    SKPaymentTransaction *currentTransaction;
+    SKMutablePayment *currentPayment;
+}
 
 @property (strong, nonatomic) id <StoreModelDelegate> delegate;
 @property (strong, nonatomic) NSMutableArray *identifiers;
@@ -25,6 +37,9 @@
 @property (strong, nonatomic) SKProductsRequest *productsRequest;
 @property (strong, nonatomic) CDAClient *contentful;
 
+-(void)buyCard:(NSString*)productIdentifier;
 -(void)getDataWithProductIdentifiers:(NSString*)productIdentifier;
+-(void)transactionResolved;
+-(void)unload;
 
 @end
