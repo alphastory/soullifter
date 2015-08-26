@@ -7,6 +7,7 @@
 //
 
 #import "Card.h"
+#import "NSFileManager+Paths.h"
 #define API_DEFAULT @"http://soullifter.co"
 
 @implementation Card
@@ -31,7 +32,8 @@
         self.title = [decoder decodeObjectForKey:@"title"];
         self.staticCard = [decoder decodeObjectForKey:@"static"];
         self.animatedCard = [decoder decodeObjectForKey:@"animated"];
-        NSLog(@"%@", self.animatedCard);
+
+//        NSLog(@"%@", self.animatedCard);
         self.lastUsed = [decoder decodeObjectForKey:@"lastUsed"];
         self.favorite = [decoder decodeBoolForKey:@"favorite"];
     }
@@ -47,6 +49,33 @@
     [encoder encodeObject:self.animatedCard forKey:@"animated"];
     [encoder encodeObject:self.lastUsed forKey:@"lastUsed"];
     [encoder encodeBool:self.favorite forKey:@"favorite"];
+}
+
+
+//Use this method to retrieve purchased files.
+-(NSURL*)getURLForPurchasedIdentifier
+{
+    NSString *contentVersion = [[NSUserDefaults standardUserDefaults] stringForKey:self.identifier];
+    
+    if(contentVersion != nil)
+    {
+        //TODO, MATT you'll need to build in a switch to determine if this is an animated or Static card type
+        NSString *assetName = [self.animatedCard lastPathComponent];
+        
+        NSString *filePath = [NSString stringWithFormat:@"%@/Content/%@", [Card getStatingPathForDownload:self.identifier], assetName];
+        return [NSURL fileURLWithPath:filePath];
+    }
+    return nil;
+}
+
++(NSURL*)getStagingURLForDownload:(NSString*)productIdentifier
+{
+    return [NSURL fileURLWithPath:[Card getStatingPathForDownload:productIdentifier]];
+}
+
++(NSString*)getStatingPathForDownload:(NSString*)productIdentifier
+{
+    return [NSString stringWithFormat:@"%@/%@", [NSFileManager IAPDirectory], productIdentifier];
 }
 
 @end

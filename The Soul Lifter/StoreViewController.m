@@ -102,8 +102,9 @@
     [self.storeView updatePurchaseStatus:@"Purchasing" isDone:NO];
 }
 
--(void)purchaseStatePurchased
+-(void)purchaseStatePurchased:(NSArray*)downloads
 {
+    
     [self.storeView updatePurchaseStatus:@"Purchased Successfully!" isDone:YES];
 }
 

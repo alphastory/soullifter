@@ -7,7 +7,9 @@
 //
 
 #import "StoreModel.h"
+#import "Card.h"
 #import "NSUserDefaults+NSUserDefaults.h"
+#import "NSFileManager+Paths.h"
 
 @implementation StoreModel
 
@@ -48,10 +50,11 @@
     return [[NSUserDefaults standardUserDefaults] stringForKey:productIdentifier] != nil;
 }
 
--(void)savePayment:(SKPayment*)payment
+-(void)saveDownload:(SKDownload*)download
 {
-    [[NSUserDefaults standardUserDefaults]setInteger:payment.quantity forKey:payment.productIdentifier];
+    [[NSUserDefaults standardUserDefaults] setValue:download.contentVersion forKey:download.contentIdentifier];
     [[NSUserDefaults standardUserDefaults] synchronize];
+
 }
 
 #pragma mark SKPaymentTransactionObserver
@@ -81,12 +84,12 @@
                 break;
                 
             case SKPaymentTransactionStatePurchased:
-                [self savePayment:transaction.payment];
-                [self.delegate purchaseStatePurchased];
+                [self processDownloads:transaction];
+
                 break;
                 
             case SKPaymentTransactionStateRestored:
-                [self savePayment:transaction.payment];
+
                 [self.delegate purchaseStateRestored];
                 break;
                 
@@ -100,6 +103,55 @@
         }
     }
 }
+
+-(void)processDownloads:(SKPaymentTransaction*)transaction
+{
+    if(transaction.downloads.count > 0){
+        [[SKPaymentQueue defaultQueue] startDownloads:transaction.downloads];
+    }
+    else{
+        //TODO handle no downloads
+    }
+}
+
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedDownloads:(NSArray *)downloads
+{
+    BOOL allDone = YES;
+    for(SKDownload* download in downloads)
+    {
+        NSLog(@"paymentQueue update: %li %f", (long)download.downloadState, download.progress);
+        if(download.downloadState != SKDownloadStateFinished)
+        {
+            allDone = NO;
+        }
+        else{
+            [self stagePayload:download];
+            [self saveDownload:download];
+        }
+    }
+    
+    if(allDone)
+    {
+        SKDownload *d = downloads[0];
+        [self.delegate purchaseStatePurchased:d.transaction.downloads];
+        [self finishTransaction:d.transaction];
+    }
+}
+
+-(void)stagePayload:(SKDownload*)download
+{
+    NSURL *fromURL = download.contentURL;
+    NSURL *toURL = [Card getStagingURLForDownload:download.contentIdentifier];
+    NSError *error = nil;
+    [[NSFileManager defaultManager]moveItemAtURL:fromURL toURL:toURL error:&error];
+    
+    if(error != nil){
+        NSLog(@"stagePayload error %@", error.localizedDescription);
+    }
+    assert(error == nil);
+}
+
+
 
 #pragma mark SKProductRequestDelegate Protocol
 
@@ -152,9 +204,14 @@
     [[SKPaymentQueue defaultQueue] addPayment:currentPayment];
 }
 
+-(void)finishTransaction:(SKPaymentTransaction*)transaction
+{
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+}
+
 -(void)transactionResolved
 {
-    [[SKPaymentQueue defaultQueue] finishTransaction:currentTransaction];
+    [self finishTransaction:currentTransaction];
 }
 
 - (void)setupModelForViewWithCallback:(void(^)(NSArray *products))callback {

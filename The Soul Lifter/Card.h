@@ -33,5 +33,6 @@
 - (id)initWithCoder:(NSCoder *)decoder;
 - (void)encodeWithCoder:(NSCoder *)encoder;
 - (void)markAsFavorite;
-
++(NSURL*)getStagingURLForDownload:(NSString*)productIdentifier;
++(NSString*)getStatingPathForDownload:(NSString*)productIdentifier;
 @end

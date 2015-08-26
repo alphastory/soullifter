@@ -12,6 +12,5 @@
 
 -(void) setBool:(NSString*)key value:(BOOL)value;
 -(void) setInteger:(NSString*)key value:(int)value;
--(void) setString:(NSString*)key value:(NSString*)value;
 
 @end

@@ -21,10 +21,5 @@
     [[NSUserDefaults  standardUserDefaults]synchronize];
 }
 
--(void) setString:(NSString*)key value:(NSString*)value
-{
-    [[NSUserDefaults standardUserDefaults] setValue:value forKey:key];
-    [[NSUserDefaults  standardUserDefaults]synchronize];
-}
 
 @end

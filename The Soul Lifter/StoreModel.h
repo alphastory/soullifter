@@ -17,7 +17,7 @@
 -(void)purchaseStatePurchasing;
 -(void)purchaseStateDeferred;
 -(void)purchaseStateFailed;
--(void)purchaseStatePurchased;
+-(void)purchaseStatePurchased:(NSArray*)downloads;
 -(void)purchaseStateRestored;
 -(void)purchaseStateAlreadyPurchased;
 

@@ -58,6 +58,7 @@
 		63D959981A5F82BD001650C2 /* store.png in Resources */ = {isa = PBXBuildFile; fileRef = 63D959901A5F82BD001650C2 /* store.png */; };
 		63E0A8411A62DEFB00C229B2 /* recents_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 63E0A8401A62DEFA00C229B2 /* recents_active.png */; };
 		AC0A6C2D1B86D37E0066586A /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC0A6C2C1B86D37E0066586A /* MediaPlayer.framework */; };
+		AC3C52DF1B8D504500107B8B /* NSFileManager+Paths.m in Sources */ = {isa = PBXBuildFile; fileRef = AC3C52DE1B8D504500107B8B /* NSFileManager+Paths.m */; };
 		AC7AF55A1B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = AC7AF5591B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m */; };
 		AC7AF55B1B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = AC7AF5591B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m */; };
 		ACF0C0C81B88202E00469395 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACF0C0C71B88202E00469395 /* StoreKit.framework */; };
@@ -149,6 +150,8 @@
 		63D959901A5F82BD001650C2 /* store.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = store.png; sourceTree = "<group>"; };
 		63E0A8401A62DEFA00C229B2 /* recents_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recents_active.png; sourceTree = "<group>"; };
 		AC0A6C2C1B86D37E0066586A /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		AC3C52DD1B8D504500107B8B /* NSFileManager+Paths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Paths.h"; sourceTree = "<group>"; };
+		AC3C52DE1B8D504500107B8B /* NSFileManager+Paths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Paths.m"; sourceTree = "<group>"; };
 		AC7AF5581B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUserDefaults+NSUserDefaults.h"; sourceTree = "<group>"; };
 		AC7AF5591B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+NSUserDefaults.m"; sourceTree = "<group>"; };
 		ACF0C0C71B88202E00469395 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -537,6 +540,8 @@
 			children = (
 				AC7AF5581B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.h */,
 				AC7AF5591B8C1C0E00160BE1 /* NSUserDefaults+NSUserDefaults.m */,
+				AC3C52DD1B8D504500107B8B /* NSFileManager+Paths.h */,
+				AC3C52DE1B8D504500107B8B /* NSFileManager+Paths.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -691,6 +696,7 @@
 				639681A21A5F97120086D74E /* SelectionViewController.m in Sources */,
 				636A92E01A62F15C003CA8C8 /* ContactView.m in Sources */,
 				635ED5F41A7550C20022429A /* StoreView.m in Sources */,
+				AC3C52DF1B8D504500107B8B /* NSFileManager+Paths.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
