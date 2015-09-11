@@ -15,11 +15,15 @@
 @protocol StoreModelDelegate <NSObject>
 
 -(void)purchaseStatePurchasing;
--(void)purchaseStateDeferred;
--(void)purchaseStateFailed;
--(void)purchaseStatePurchased:(NSArray*)downloads;
+-(void)purchaseStateDeferred:(SKPaymentTransaction*)transaction;
+-(void)purchaseStateFailed:(SKPaymentTransaction*)transaction;
+-(void)purchaseStatePurchased:(SKPaymentTransaction*)transaction;
 -(void)purchaseStateRestored;
 -(void)purchaseStateAlreadyPurchased;
+
+-(void)willRestorePurchases:(NSArray*)transactions;
+-(void)didFinishRestoringPurchases;
+-(void)didFailToRestorePurchases:(NSError*)error;
 
 @optional
 -(void)receivedDataFromModel:(NSArray *)products;
@@ -29,6 +33,7 @@
 {
     SKPaymentTransaction *currentTransaction;
     SKMutablePayment *currentPayment;
+    BOOL isRestoring;
 }
 
 @property (strong, nonatomic) id <StoreModelDelegate> delegate;
@@ -39,7 +44,8 @@
 
 -(void)buyCard:(NSString*)productIdentifier;
 -(void)getDataWithProductIdentifiers:(NSString*)productIdentifier;
--(void)transactionResolved;
+-(void)transactionResolved:(SKPaymentTransaction*)transaction;
+-(void)restorePurchases;
 -(void)unload;
 
 @end

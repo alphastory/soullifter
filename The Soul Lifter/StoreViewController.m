@@ -34,6 +34,11 @@
 //    NSLog(@"Authorization Failed");
 //}
 
+-(void)restorePurchases
+{
+    [self.storeModel restorePurchases];
+}
+
 -(void)purchaseCardWithIdentifier:(NSString *)identifier {
     [self.storeModel buyCard:identifier];
 }
@@ -79,12 +84,39 @@
 }
 
 #pragma mark - StoreViewDelegate
--(void)purchaseComplete
+-(void)purchaseComplete:(id)transaction
 {
-    [self.storeModel transactionResolved];
+    [self.storeModel transactionResolved:transaction];
 }
 
 #pragma mark - StoreModelDelegate
+-(void)willRestorePurchases:(NSArray *)transactions
+{
+    if(!restoringAlert){
+        restoringAlert = [[UIAlertView alloc]initWithTitle:@"Restoring In App Purchases" message:@"" delegate:nil cancelButtonTitle:nil otherButtonTitles:nil];
+        [restoringAlert show];
+    }
+}
+
+-(void)didFinishRestoringPurchases
+{
+    [self removeRestoringAlert];
+}
+
+-(void)didFailToRestorePurchases:(NSError*)error
+{
+    [self removeRestoringAlert];
+    [self doAlert:@"Could not restore In App Purchases at this time. Please try again later."];
+}
+
+-(void)removeRestoringAlert
+{
+    if(restoringAlert){
+        [restoringAlert dismissWithClickedButtonIndex:0 animated:YES];
+        restoringAlert = nil;
+    }
+}
+
 -(void)receivedDataFromModel:(NSArray *)products {
     //    NSLog(@"Received Products");
     //    NSLog(@"%@", products);
@@ -99,28 +131,28 @@
 
 -(void)purchaseStatePurchasing
 {
-    [self.storeView updatePurchaseStatus:@"Purchasing" isDone:NO];
+    [self.storeView updatePurchaseStatus:@"Purchasing" isDone:NO withTransaction:nil];
 }
 
--(void)purchaseStatePurchased:(NSArray*)downloads
+-(void)purchaseStatePurchased:(SKPaymentTransaction*)transaction
 {
     
-    [self.storeView updatePurchaseStatus:@"Purchased Successfully!" isDone:YES];
+    [self.storeView updatePurchaseStatus:@"Purchased Successfully!" isDone:YES withTransaction:transaction];
 }
 
--(void)purchaseStateFailed
+-(void)purchaseStateFailed:(SKPaymentTransaction*)transaction
 {
-    [self.storeView updatePurchaseStatus:@"Purchase Failed" isDone:YES];
+    [self.storeView updatePurchaseStatus:@"Purchase Failed" isDone:YES withTransaction:transaction];
 }
 
--(void)purchaseStateDeferred
+-(void)purchaseStateDeferred:(SKPaymentTransaction*)transaction
 {
-    [self.storeView updatePurchaseStatus:@"Purchase Deferred" isDone:YES];
+    [self.storeView updatePurchaseStatus:@"Purchase Deferred" isDone:YES withTransaction:transaction];
 }
 
 -(void)purchaseStateRestored
 {
-    [self.storeView updatePurchaseStatus:@"Purchase Restored" isDone:YES];
+//    [self.storeView updatePurchaseStatus:@"Purchase Restored" isDone:NO];
 }
 
 

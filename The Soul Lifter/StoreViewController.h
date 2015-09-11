@@ -13,6 +13,10 @@
 
 
 @interface StoreViewController : UIViewController <StoreViewDelegate, StoreModelDelegate>
+{
+    UIAlertView *restoringAlert;
+}
+
 
 @property (strong, nonatomic) StoreView *storeView;
 @property (strong, nonatomic) StoreModel *storeModel;

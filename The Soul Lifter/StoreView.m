@@ -68,6 +68,7 @@
     [self addSubview:buyCard];
     
     // Add the Send as Text Action
+//    [buyCard addTarget:self action:@selector(restorePurchesesButtonDidPress:) forControlEvents:UIControlEventTouchUpInside];
     [buyCard addTarget:self action:@selector(buyCurrentCard) forControlEvents:UIControlEventTouchUpInside];
     
     // Send as Email Button
@@ -79,6 +80,8 @@
     [self addSubview:buyCollection];
     
     // Add the Send as Email Action
+    //TODO: Matt, rig a UIButton to call restorePurchasesButtonDidPress:
+//    [buyCollection addTarget:self action:@selector(restorePurchasesButtonDidPress:) forControlEvents:UIControlEventTouchUpInside];
     [buyCollection addTarget:self action:@selector(buyCurrentCollection) forControlEvents:UIControlEventTouchUpInside];
     
     // Add the Go Back Button
@@ -93,6 +96,12 @@
     [goBackButton addTarget:self action:@selector(goBackClicked) forControlEvents:UIControlEventTouchUpInside];
     
 //    [self.delegate getProducts];
+}
+
+//TODO Matt, rig this to an actual button in the UI
+-(IBAction)restorePurchasesButtonDidPress:(UIButton*)sender
+{
+    [self.delegate restorePurchases];
 }
 
 -(void)buyCurrentCard {
@@ -426,14 +435,14 @@
     [self doAlert:@"This card has already been purchased"];
 }
 
--(void)updatePurchaseStatus:(NSString*)status isDone:(BOOL)isDone
+-(void)updatePurchaseStatus:(NSString*)status isDone:(BOOL)isDone withTransaction:(id)transaction
 {
 //    [purchasingView updatePurchaseState:status];
     
     if(isDone)
     {
         [purchasingSpinner stopAnimating];
-        [self transactionEnd];
+        [self transactionEnd:transaction];
     }
 }
 
@@ -450,9 +459,9 @@
 //    //TODO: see if we can cancel a transaction
 //}
 
--(void)transactionEnd
+-(void)transactionEnd:(id)transaction
 {
-    [_delegate purchaseComplete];
+    [_delegate purchaseComplete:transaction];
 }
 
 #pragma mark Go Back

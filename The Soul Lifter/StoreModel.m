@@ -54,13 +54,37 @@
 {
     [[NSUserDefaults standardUserDefaults] setValue:download.contentVersion forKey:download.contentIdentifier];
     [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
+-(void)restorePurchases
+{
+    //https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Chapters/Restoring.html#//apple_ref/doc/uid/TP40008267-CH8-SW9
+    [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
+    [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
 #pragma mark SKPaymentTransactionObserver
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions
 {
+    NSMutableArray *restoring = [NSMutableArray new];
+    NSMutableArray *otherTransactions = [NSMutableArray new];
     for (SKPaymentTransaction *transaction in transactions) {
+        if(transaction.transactionState == SKPaymentTransactionStateRestored)
+        {
+            NSLog(@"restoring %@", transaction.transactionIdentifier);
+            [restoring addObject:transaction];
+        }
+        else{
+            [otherTransactions addObject:transaction];
+        }
+    }
+    
+    if(restoring.count > 0){
+        [self.delegate willRestorePurchases:restoring];
+        [self processMultipleDownloads:restoring];
+    }
+
+    for (SKPaymentTransaction *transaction in otherTransactions) {
         
         if([currentPayment.productIdentifier isEqualToString:transaction.payment.productIdentifier]){
             currentTransaction = transaction;
@@ -76,31 +100,38 @@
                 break;
                 
             case SKPaymentTransactionStateDeferred:
-                [self.delegate purchaseStateDeferred];
+                [self.delegate purchaseStateDeferred:transaction];
                 break;
                 
             case SKPaymentTransactionStateFailed:
-                [self.delegate purchaseStateFailed];
+                [self.delegate purchaseStateFailed:transaction];
                 break;
                 
             case SKPaymentTransactionStatePurchased:
                 [self processDownloads:transaction];
-
                 break;
                 
-            case SKPaymentTransactionStateRestored:
-
-                [self.delegate purchaseStateRestored];
-                break;
+//                case SKPaymentTransactionStateRestored:
+//                    [self.delegate purchaseStateRestored];
+//                    break;
                 
-            default:
-                
-                // For debugging
-                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-                NSLog(@"Unexpected transaction state %@", @(transaction.transactionState));
-                break;
+                default:
+                    
+                    // For debugging
+                    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                    NSLog(@"Unexpected transaction state %@", @(transaction.transactionState));
+                    break;
                 
         }
+    }
+}
+
+-(void)processMultipleDownloads:(NSArray*)transactions
+{
+//    SKPaymentTransaction*
+    for(SKPaymentTransaction *t in transactions)
+    {
+        [self processDownloads:t];
     }
 }
 
@@ -133,7 +164,7 @@
     if(allDone)
     {
         SKDownload *d = downloads[0];
-        [self.delegate purchaseStatePurchased:d.transaction.downloads];
+        [self.delegate purchaseStatePurchased:d.transaction];
         [self finishTransaction:d.transaction];
     }
 }
@@ -148,10 +179,18 @@
     if(error != nil){
         NSLog(@"stagePayload error %@", error.localizedDescription);
     }
-    assert(error == nil);
+//    assert(error == nil);
 }
 
+-(void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue
+{
+    [self.delegate didFinishRestoringPurchases];
+}
 
+-(void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error
+{
+    [self.delegate didFailToRestorePurchases:error];
+}
 
 #pragma mark SKProductRequestDelegate Protocol
 
@@ -160,7 +199,6 @@
     if([self alreadyPurchased:productIdentifier])
     {
         [self.delegate purchaseStateAlreadyPurchased];
-
     }
     else{
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
@@ -202,16 +240,18 @@
     currentPayment = [SKMutablePayment paymentWithProduct:product];
     currentPayment.quantity = 1;
     [[SKPaymentQueue defaultQueue] addPayment:currentPayment];
+    //calls back on the paymentQueue:updatedTransactions
 }
 
 -(void)finishTransaction:(SKPaymentTransaction*)transaction
 {
+    NSLog(@"finished %@", transaction.transactionIdentifier);
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
 }
 
--(void)transactionResolved
+-(void)transactionResolved:(SKPaymentTransaction*)transaction
 {
-    [self finishTransaction:currentTransaction];
+    [self finishTransaction:transaction];
 }
 
 - (void)setupModelForViewWithCallback:(void(^)(NSArray *products))callback {

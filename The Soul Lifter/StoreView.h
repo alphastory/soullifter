@@ -15,8 +15,9 @@
 @protocol StoreViewDelegate <NSObject>
 -(void)returnToHome;
 -(void)getProducts;
+-(void)restorePurchases;
 -(void)purchaseCardWithIdentifier:(NSString*)identifier;
--(void)purchaseComplete;
+-(void)purchaseComplete:(id)transaction;
 -(void)alreadyPurchased;
 @end
 
@@ -47,6 +48,6 @@
 
 -(void)buildView;
 -(void)addCardsToUIWithData:(NSMutableArray*)cardsList;
--(void)updatePurchaseStatus:(NSString*)status isDone:(BOOL)isDone;
+-(void)updatePurchaseStatus:(NSString*)status isDone:(BOOL)isDone withTransaction:(id)transaction;
 -(void)alreadyPurchased;
 @end
