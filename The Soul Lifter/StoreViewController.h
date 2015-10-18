@@ -10,9 +10,10 @@
 //#import <DropboxSDK/DropboxSDK.h>
 #import "StoreView.h"
 #import "StoreModel.h"
+#import "CollectionSelectorTableViewController.h"
 
 
-@interface StoreViewController : UIViewController <StoreViewDelegate, StoreModelDelegate>
+@interface StoreViewController : UIViewController <StoreViewDelegate, StoreModelDelegate, CollectionSelectorProtocol>
 {
     UIAlertView *restoringAlert;
 }

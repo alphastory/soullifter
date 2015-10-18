@@ -7,6 +7,7 @@
 //
 
 #import "Card.h"
+#import <ContentfulDeliveryAPI/ContentfulDeliveryAPI.h>
 #import "NSFileManager+Paths.h"
 #define API_DEFAULT @"http://soullifter.co"
 
@@ -24,6 +25,34 @@
     self.favorite = YES;
 }
 
+- (id)initWithDictionary:(NSDictionary *)dictionary
+{
+    if((self = [super init])) {
+        //decode properties, other class vars
+        self.isAnimated = dictionaryBoolValue(dictionary[@"animated"]);
+        self.identifier = dictionary[@"identifier"];
+        self.type = dictionary[@"type"];
+        self.title = dictionary[@"title"];
+        self.staticCard = dictionary[@"static"];
+        self.price = dictionary[@"price"];
+        
+        
+        id previewObject = dictionary[@"preview"];
+        if([previewObject isKindOfClass:[CDAAsset class]])
+        {
+            self.preview = ((CDAAsset*)dictionary[@"preview"]).URL.absoluteString;
+        }
+        else if([previewObject isKindOfClass:[NSString class]]){
+            //this is used for testing data from local json.
+            self.preview = dictionary[@"preview"];
+        }
+        
+        
+        self.isCollection = dictionaryBoolValue(dictionary[@"isCollection"]);
+    }
+    return self;
+}
+
 - (id)initWithCoder:(NSCoder *)decoder {
     if((self = [super init])) {
         //decode properties, other class vars
@@ -32,7 +61,8 @@
         self.title = [decoder decodeObjectForKey:@"title"];
         self.staticCard = [decoder decodeObjectForKey:@"static"];
         self.animatedCard = [decoder decodeObjectForKey:@"animated"];
-
+        
+        
 //        NSLog(@"%@", self.animatedCard);
         self.lastUsed = [decoder decodeObjectForKey:@"lastUsed"];
         self.favorite = [decoder decodeBoolForKey:@"favorite"];
@@ -76,6 +106,11 @@
 +(NSString*)getStatingPathForDownload:(NSString*)productIdentifier
 {
     return [NSString stringWithFormat:@"%@/%@", [NSFileManager IAPDirectory], productIdentifier];
+}
+
+bool dictionaryBoolValue(NSString* value)
+{
+    return value != nil && [value boolValue];
 }
 
 @end

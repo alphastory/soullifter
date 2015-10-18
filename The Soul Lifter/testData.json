@@ -1,0 +1,38 @@
+[
+    {
+        "animated":0,
+        "collectionName":"Hope",
+        "identifier":"co.soullifter.TheSouLifter.Hope",
+        "isCollection":1,
+        "preview":"https://c2.staticflickr.com/6/5809/21877400935_63f7a62dfb_m.jpg",
+        "price":"2.99",
+        "title":"Hope"
+    },
+    {
+        "animated":0,
+        "collectionName":"Hope",
+        "identifier":"co.soullifter.TheSouLifter.Hope2",
+        "isCollection":0,
+        "preview":"https://c2.staticflickr.com/6/5721/21254660554_bc110001d8.jpg",
+        "price":"0.99",
+        "title":"Sunset"
+     },
+     {
+         "animated":0,
+         "collectionName":"Hope",
+         "identifier":"co.soullifter.TheSouLifter.Hope3",
+         "isCollection":0,
+         "preview":"https://c1.staticflickr.com/1/778/21887022841_89154639cc.jpg",
+         "price":"0.99",
+         "title":"Sunset II"
+     },
+     {
+         "animated":0,
+         "collectionName":"Hope",
+         "identifier":"co.soullifter.TheSouLifter.Hope4",
+         "isCollection":0,
+         "preview":"https://c2.staticflickr.com/6/5658/21865470612_f28c8df0bc.jpg",
+         "price":"0.99",
+         "title":"Sunset III"
+     }
+]

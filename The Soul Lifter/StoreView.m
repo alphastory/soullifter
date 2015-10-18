@@ -7,7 +7,8 @@
 //
 
 #import "StoreView.h"
-
+#import "BackArrowView.h"
+#import "CollectionModel.h"
 
 @implementation StoreView
 
@@ -42,7 +43,7 @@
     
     // Add Scroll View
     self.cardsView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, selectionTitle.frame.size.height + 1, width, (height * .5) - 2)];
-    self.cardsView.contentSize = CGSizeMake(((self.cardsView.frame.size.width - 80) * [self.allCards count]) + 80, self.cardsView.frame.size.height);
+    self.cardsView.contentSize = CGSizeMake(((self.cardsView.frame.size.width - 80) * [self.activeCollection count]) + 80, self.cardsView.frame.size.height);
     self.cardsView.pagingEnabled = NO;
     self.cardsView.scrollEnabled = NO;
     [self addSubview:self.cardsView];
@@ -51,16 +52,20 @@
     [self addActivityIndicator];
     
     // Add the Page Control Indicators
-    self.cardsCount = [[UIPageControl alloc] initWithFrame:CGRectMake(0, height - (height * .4), width, (height * .1) -1)];
-    self.cardsCount.numberOfPages = [self.allCards count];
-    self.cardsCount.backgroundColor = surfBlue;
+    self.cardsCount = [[UIPageControl alloc] initWithFrame:CGRectMake(0, self.cardsView.frame.origin.y + self.cardsView.frame.size.height - 40, width, 40)];
+    self.cardsCount.numberOfPages = [self.activeCollection count];
+    self.cardsCount.backgroundColor = [UIColor clearColor];
     self.cardsCount.pageIndicatorTintColor = whiteOpaque;
     self.cardsCount.currentPageIndicatorTintColor = [UIColor whiteColor];
+    self.cardsCount.layer.shadowRadius = 3;
+    self.cardsCount.layer.shadowOpacity = 0.5;
+    self.cardsCount.layer.shadowColor = [UIColor blackColor].CGColor;
     self.cardsCount.currentPage = 0;
+    self.cardsView.backgroundColor = surfBlue;
     [self addSubview:self.cardsCount];
     
     // Send as Text Button
-    buyCard = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .3), width, (height * .1) - 1)];
+    buyCard = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .4), width, (height * .1) - 1)];
     [buyCard setTitle:@"Buy Card" forState:UIControlStateNormal];
     [buyCard setBackgroundColor:surfBlue];
     [buyCard setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -72,25 +77,48 @@
     [buyCard addTarget:self action:@selector(buyCurrentCard) forControlEvents:UIControlEventTouchUpInside];
     
     // Send as Email Button
-    UIButton *buyCollection = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .2), width, (height * .1) - 1)];
-    [buyCollection setTitle:@"Buy Collection" forState:UIControlStateNormal];
-    [buyCollection setBackgroundColor:surfBlue];
-    [buyCollection setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [[buyCollection titleLabel] setFont:montserrat];
-    [self addSubview:buyCollection];
+    buyCollectionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .3), width, (height * .1) - 1)];
+    [buyCollectionButton setTitle:@"Buy Collection" forState:UIControlStateNormal];
+    [buyCollectionButton setBackgroundColor:surfBlue];
+    [buyCollectionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [[buyCollectionButton titleLabel] setFont:montserrat];
+    [self addSubview:buyCollectionButton];
     
-    // Add the Send as Email Action
-    //TODO: Matt, rig a UIButton to call restorePurchasesButtonDidPress:
-//    [buyCollection addTarget:self action:@selector(restorePurchasesButtonDidPress:) forControlEvents:UIControlEventTouchUpInside];
-    [buyCollection addTarget:self action:@selector(buyCurrentCollection) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *restorIAPButton = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .1), width, (height * .1) - 1)];
+    [restorIAPButton setTitle:@"Restore In-App Purchases" forState:UIControlStateNormal];
+    [restorIAPButton setBackgroundColor:surfBlue];
+    [restorIAPButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [[restorIAPButton titleLabel] setFont:montserrat];
+    [self addSubview:restorIAPButton];
+    [restorIAPButton addTarget:self action:@selector(restorePurchasesButtonDidPress:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    [buyCollectionButton addTarget:self action:@selector(buyCurrentCollection) forControlEvents:UIControlEventTouchUpInside];
+    
+    BackArrowView *backArrow = [[BackArrowView alloc]initWithFrame:CGRectMake(13, (height * .05)-7, 7, 15)];
+    backArrow.backgroundColor = surfBlue;
+    [self addSubview:backArrow];
+    
     
     // Add the Go Back Button
-    UIButton *goBackButton = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .1), width, (height * .1))];
+    UIButton *goBackButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 150, height * .1)];
     [goBackButton setTitle:@"Go Back" forState:UIControlStateNormal];
-    [goBackButton setBackgroundColor:surfBlue];
+    [goBackButton setBackgroundColor:[UIColor clearColor]];
+    goBackButton.titleLabel.textAlignment = NSTextAlignmentLeft;
+    goBackButton.titleEdgeInsets = UIEdgeInsetsMake(10, 25, 10, 10);
+    goBackButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     [goBackButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [[goBackButton titleLabel] setFont:montserrat];
     [self addSubview:goBackButton];
+    
+    
+    UIButton *viewAllCollectionsButton = [[UIButton alloc] initWithFrame:CGRectMake(0, height - (height * .2), width, (height * .1) - 1)];
+    [viewAllCollectionsButton setTitle:@"View all collections" forState:UIControlStateNormal];
+    [viewAllCollectionsButton setBackgroundColor:surfBlue];
+    [viewAllCollectionsButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [[viewAllCollectionsButton titleLabel] setFont:montserrat];
+    [self addSubview:viewAllCollectionsButton];
+    [viewAllCollectionsButton addTarget:self action:@selector(viewAllCollectionsButtonDidPress:) forControlEvents:UIControlEventTouchUpInside];
     
     // Add the Go Back Action
     [goBackButton addTarget:self action:@selector(goBackClicked) forControlEvents:UIControlEventTouchUpInside];
@@ -98,48 +126,47 @@
 //    [self.delegate getProducts];
 }
 
-//TODO Matt, rig this to an actual button in the UI
--(IBAction)restorePurchasesButtonDidPress:(UIButton*)sender
+-(void)viewAllCollectionsButtonDidPress:(UIButton*)sender
 {
-    [self.delegate restorePurchases];
+    [self.delegate viewAllCollections:[storeDataSource getCollections]];
 }
 
--(void)buyCurrentCard {
-    NSLog(@"%@", self.activeCard);
-    
-    //show purchasing UI
-    if(!purchasingSpinner){
-        purchasingSpinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-        purchasingSpinner.center = CGPointMake(buyCard.frame.origin.x + buyCard.frame.size.width - (purchasingSpinner.bounds.size.width + 15), buyCard.center.y);
-        [self addSubview:purchasingSpinner];
+-(void)resetView
+{
+    int count = (int)self.cardsView.subviews.count-1;
+    for(int i = count; i >= 0; i--)
+    {
+        [self.cardsView.subviews[0] removeFromSuperview];
     }
-    [purchasingSpinner startAnimating];
     
-//    purchasingView = (PurchasingView*)[[NSBundle mainBundle]loadNibNamed:@"PurchasingView" owner:nil options:nil][0];
-//    purchasingView.delegate = self;
-
-//    [self addSubview:purchasingView];
-//    purchasingView.center = self.center;
-    
-//    [purchasingView beginPurchasing];
-    
-    [self.delegate purchaseCardWithIdentifier:self.activeCard[@"identifier"]];
+    count = (int)self.cardsView.gestureRecognizers.count-1;
+    for(int i = count; i >= 0; i--)
+    {
+        [self.cardsView removeGestureRecognizer:self.cardsView.gestureRecognizers[0]];
+    }
 }
 
--(void)buyCurrentCollection {
-    NSLog(@"Purchasing Current Collection");
-}
-
--(void)addCardsToUIWithData:(NSMutableArray*)cardsList {
+-(void)showCardsForCollection:(CollectionModel*)collection
+{
+    if(collection == self.activeCollection)
+    {
+        return;
+    }
     
-    self.allCards = [[NSMutableArray alloc] initWithArray:cardsList];
-    self.cardsView.contentSize = CGSizeMake(((self.cardsView.frame.size.width - 80) * [self.allCards count]) + 80, self.cardsView.frame.size.height);
-    if([self.allCards count] > 0){
+    [self resetView];
+    self.activeCollection = collection;
+    [buyCollectionButton setTitle:[NSString stringWithFormat:@"Buy %@ Collection - $%@", collection.collectionName, collection.price] forState:UIControlStateNormal];
+    
+    NSLog(@"this collection has %i cards in it.",[collection count]);
+    
+    self.cardsView.contentSize = CGSizeMake(((self.cardsView.frame.size.width - 80) * [collection count]) + 80, self.cardsView.frame.size.height);
+    if([collection count] > 0){
         
         CGRect frame;
-        for( int i = 0; i < [self.allCards count]; i++){
-            if([self.allCards objectAtIndex:i]){
-                NSDictionary *card = [self.allCards objectAtIndex:i];
+        for( int i = 0; i < [collection count]; i++){
+            if([collection cardAtIndex:i]){
+                Card *card = [collection cardAtIndex:i];
+
                 self.activeCard = card;
                 
                 // Make the view to put the card in.
@@ -156,22 +183,23 @@
                 [self.cardsView addSubview:subview];
                 
                 // Set the price
-                [buyCard setTitle:[NSString stringWithFormat:@"Buy Card - $%@", card[@"price"]] forState:UIControlStateNormal];
+                [buyCard setTitle:[NSString stringWithFormat:@"Buy Card - $%@", card.price] forState:UIControlStateNormal];
                 
                 // Get the current card.
-                NSURL *imageURL = [NSURL URLWithString:card[@"preview"]];
+                NSURL *imageURL = [NSURL URLWithString:card.preview];
                 
                 NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
                 UIImage *currentCard = [UIImage imageWithData:imageData];
                 
-//                UIImage *currentCard = [UIImage imageNamed:card.staticCard];
+                //                UIImage *currentCard = [UIImage imageNamed:card.staticCard];
                 UIImageView *currentCardView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, subview.frame.size.width - 20, subview.frame.size.height - 20)];
                 currentCardView.contentMode = UIViewContentModeScaleAspectFill;
+                currentCardView.clipsToBounds = YES;
                 currentCardView.image = currentCard;
                 [subview addSubview:currentCardView];
             }
         }
-        self.cardsCount.numberOfPages = [self.allCards count];
+        self.cardsCount.numberOfPages = [collection count];
     }
     
     // add SwipeGestureRecognizer to your ScrollView:
@@ -184,14 +212,14 @@
     [self.cardsView addGestureRecognizer:swipeBackward];
     
     // Show the Preview Gesture
-    if( [self.allCards count] > 0 ){
+    if( [collection count] > 0 ){
         UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(playCardPreview)];
         singleTap.numberOfTapsRequired = 1;
         [self.cardsView addGestureRecognizer:singleTap];
     }
     
-    if( [self.allCards count] > 0 ){
-        self.activeCard = [self.allCards objectAtIndex:0];
+    if( [collection count] > 0 ){
+        self.activeCard = [collection cardAtIndex:0];
     } else {
         UILabel *noCards = [[UILabel alloc] initWithFrame:CGRectMake(0, (self.cardsView.frame.size.height / 2) - 25, self.cardsView.frame.size.width, 50)];
         noCards.text = @"No cards available for purchase.";
@@ -201,6 +229,61 @@
         [self.cardsView addSubview:noCards];
     }
     [self removeActivityIndicator];
+    
+}
+
+-(void)restorePurchasesButtonDidPress:(UIButton*)sender
+{
+    [self.delegate restorePurchases];
+}
+
+-(void)buyCurrentCard {
+    [self buyIdentifier:self.activeCard.identifier isCollection:false];
+}
+
+-(void)buyCurrentCollection {
+    [self buyIdentifier:self.activeCollection.identifier isCollection:true];
+}
+
+-(void)buyIdentifier:(NSString*)identifier isCollection:(BOOL)isCollection
+{
+    if(!purchasingSpinner){
+        purchasingSpinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+        
+        UIButton *targetView = isCollection ? buyCollectionButton : buyCard;
+
+        purchasingSpinner.center = CGPointMake(targetView.frame.origin.x + targetView.frame.size.width - (purchasingSpinner.bounds.size.width + 15), targetView.center.y);
+        [self addSubview:purchasingSpinner];
+    }
+    
+    [purchasingSpinner startAnimating];
+    
+    //    purchasingView = (PurchasingView*)[[NSBundle mainBundle]loadNibNamed:@"PurchasingView" owner:nil options:nil][0];
+    //    purchasingView.delegate = self;
+    
+    //    [self addSubview:purchasingView];
+    //    purchasingView.center = self.center;
+    
+    //    [purchasingView beginPurchasing];
+    
+    
+    [self.delegate purchaseCardWithIdentifier:identifier];// self.activeCard[@"identifier"]];
+}
+
+-(void)addCardsToUIWithData:(StoreDataSource*)_storeDataSource {
+    
+    storeDataSource = _storeDataSource;
+    [self showCardsForCollection:[self getCollectionAtIndex:0]];
+}
+
+-(CollectionModel*)getCollectionAtIndex:(int)index
+{
+    if([storeDataSource getCollections].count > index){
+        return [storeDataSource getCollections][index];
+    }
+    else{
+        return nil;
+    }
 }
 
 -(void)playCardPreview {
@@ -221,11 +304,10 @@
     }
     [self addSubview:modal];
     
-//    NSString *url = [NSString stringWithFormat:@"http:%@", self.activeCard[@"preview"]];
 
-    if([self.activeCard[@"animated"]boolValue]){
+    if(self.activeCard.isAnimated){
      
-        NSString *url = [NSString stringWithFormat:@"%@", self.activeCard[@"animatedPreview"]];
+        NSString *url = [NSString stringWithFormat:@"%@", self.activeCard.animatedCard];//self.activeCard[@"animatedPreview"]];
         
         [self tearDownMoviePlayer];
         
@@ -257,7 +339,7 @@
         
     }
     else{
-        NSString *url = [NSString stringWithFormat:@"%@", self.activeCard[@"preview"]];
+        NSString *url = [NSString stringWithFormat:@"%@", self.activeCard.preview];
         NSURL *imageURL = [NSURL URLWithString:url];
         NSData *imageData = [[NSData alloc] initWithContentsOfURL:imageURL];
         UIImage *previewImage = [UIImage imageWithData:imageData];
@@ -408,23 +490,23 @@
 
 - (void)scrollBackOneCard {
     if( self.cardsCount.currentPage - 1 >= 0){
-        NSInteger page = self.cardsCount.currentPage - 1;
-        self.activeCard = [self.allCards objectAtIndex:page];
+        int page = (int)(self.cardsCount.currentPage - 1);
+        self.activeCard = [self.activeCollection cardAtIndex:page];
         CGPoint destination = CGPointMake((self.cardsView.frame.size.width - 40) * page, 0);
         [self.cardsView setContentOffset:destination animated:YES];
         self.cardsCount.currentPage = page;
-        [buyCard setTitle:[NSString stringWithFormat:@"$%@", self.activeCard[@"price"]] forState:UIControlStateNormal];
+        [buyCard setTitle:[NSString stringWithFormat:@"Buy Card - $%@", self.activeCard.price] forState:UIControlStateNormal];
     }
 }
 
 - (void)scrollForwardOneCard {
     if( self.cardsCount.currentPage + 1 < self.cardsCount.numberOfPages){
-        NSInteger page = self.cardsCount.currentPage + 1;
-        self.activeCard = [self.allCards objectAtIndex:page];
+        int page = (int)(self.cardsCount.currentPage + 1);
+        self.activeCard = [self.activeCollection cardAtIndex:page];
         CGPoint destination = CGPointMake((self.cardsView.frame.size.width - 40) * page, 0);
         [self.cardsView setContentOffset:destination animated:YES];
         self.cardsCount.currentPage = page;
-        [buyCard setTitle:[NSString stringWithFormat:@"$%@", self.activeCard[@"price"]] forState:UIControlStateNormal];
+        [buyCard setTitle:[NSString stringWithFormat:@"Buy Card - $%@", self.activeCard.price] forState:UIControlStateNormal];
     }
 }
 

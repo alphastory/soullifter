@@ -10,6 +10,7 @@
 #import "Card.h"
 #import "NSUserDefaults+NSUserDefaults.h"
 #import "NSFileManager+Paths.h"
+#import "StoreDataSource.h"
 
 @implementation StoreModel
 
@@ -28,17 +29,20 @@
     
     self.contentful = [[CDAClient alloc] initWithSpaceKey:@"d9dwm1vmidcl"
                                               accessToken:@"6369ecefd79aaa5f8771e338566e9e686e2bb761a54711e72762bd69284f80ce"];
-    
+
     [self.contentful fetchEntriesWithSuccess:^(CDAResponse *response, CDAArray *array) {
         for (CDAEntry *entry in array.items) {
             NSString *identifier = [entry.fields objectForKey:@"identifier"];
             [self.products addObject:entry.fields];
             [self.identifiers addObject:identifier];
         }
-        [self setupModelForViewWithCallback:^(NSArray *products) {
-            [self.delegate receivedDataFromModel:products];
+        
+        StoreDataSource *sds = [[StoreDataSource alloc]initWithProducts:self.products];
+        
+//        [self setupModelForViewWithCallback:^(NSArray *products) {
+            [self.delegate receivedDataFromModel:sds];
 //            [self getDataWithProductIdentifiers:self.identifiers];
-        }];
+//        }];
     } failure:^(CDAResponse *response, NSError *error) {
         NSLog(@"Errors");
         NSLog(@"%@", error);
@@ -207,8 +211,12 @@
 }
 
 -(void)getDataWithProductIdentifiers:(NSString*)productIdentifier {
-    NSArray *productIdentifiers = [[NSArray alloc] initWithObjects:productIdentifier, nil];
-    self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithArray:productIdentifiers]];
+//    NSArray *productIdentifiers = [[NSArray alloc] initWithObjects:productIdentifier, nil];
+
+//    self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithArray:@[@"co.soullifter.TheSoulLifter.ItsYouAndMe",@"co.soullifter.TheSoulLifter.YoureNotAlone"]]];
+    
+    self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithArray:@[productIdentifier]]];
+    
     self.productsRequest.delegate = self;
     [self.productsRequest start];
 }
@@ -218,20 +226,26 @@
     
     //TODO handle more than one product being available. This is posbile if an array was passed in to the SKProductsRequest.
     //currently this  requests a payment for the first item. We'd need to extend this to purchase multiples at once.
-    assert(response.products.count < 2);
+//    assert(response.products.count < 2);
     
     for( NSString *invalidIdentifier in response.invalidProductIdentifiers ){
         // Handle invalidities
         NSLog(@"invalid products %@", invalidIdentifier);
     }
     
-    if(response.products.count == 1)
-    {
-        [self requestPayment:response.products[0]];
+    
+    for (int i = 0; i < response.products.count; i++) {
+        [self requestPayment:response.products[i]];
     }
-    else{
-        NSLog(@"no products to buy!");
-    }
+    
+    
+//    if(response.products.count == 1)
+//    {
+//        [self requestPayment:response.products[0]];
+//    }
+//    else{
+//        NSLog(@"no products to buy!");
+//    }
 }
 
 

@@ -24,12 +24,17 @@
 @property (strong, nonatomic) NSString *title;
 @property (retain, nonatomic) NSString *staticCard;
 @property (strong, nonatomic) NSString *animatedCard;
+@property (strong, nonatomic) NSString *price;
+@property (strong, nonatomic) NSString *preview;
 @property (strong, nonatomic) NSDate *lastUsed;
 @property (nonatomic) BOOL favorite;
+@property (nonatomic) BOOL isCollection;
+@property (nonatomic) BOOL isAnimated;
 
 @property (assign, nonatomic) id<CardDelegate> delegate;
 
 - (id)initWithName:(NSString *)name;
+- (id)initWithDictionary:(NSDictionary *)dictionary;
 - (id)initWithCoder:(NSCoder *)decoder;
 - (void)encodeWithCoder:(NSCoder *)encoder;
 - (void)markAsFavorite;

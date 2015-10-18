@@ -62,8 +62,8 @@
 -(void)getProducts {
     if( [self.storeModel respondsToSelector:@selector(getDataWithProductIdentifiers:)]){
         NSLog(@"Retrieving Products");
-        [self.storeModel getDataWithProductIdentifiers:@[]];
-        self.storeView.allCards = self.storeModel.products;
+        [self.storeModel getDataWithProductIdentifiers:@""];
+//        self.storeView.allCards = self.storeModel.products;
     }
     [self sendCardsToView];
 }
@@ -81,6 +81,13 @@
 -(void)doAlert:(NSString*)message
 {
     [[[UIAlertView alloc]initWithTitle:@"" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil]show];
+}
+
+#pragma mark - CollectionSelectorProtocol
+-(void)collectionSelectorDidSelectCollection:(CollectionModel *)collection
+{
+    //I want to view cards from this collection please
+    [self.storeView showCardsForCollection:collection];
 }
 
 #pragma mark - StoreViewDelegate
@@ -117,11 +124,11 @@
     }
 }
 
--(void)receivedDataFromModel:(NSArray *)products {
+-(void)receivedDataFromModel:(StoreDataSource *)storeDataSource {
     //    NSLog(@"Received Products");
     //    NSLog(@"%@", products);
     //    [self listContent:products];
-    [self.storeView addCardsToUIWithData:products];
+    [self.storeView addCardsToUIWithData:storeDataSource];
 }
 
 -(void)purchaseStateAlreadyPurchased
@@ -153,6 +160,15 @@
 -(void)purchaseStateRestored
 {
 //    [self.storeView updatePurchaseStatus:@"Purchase Restored" isDone:NO];
+}
+
+-(void)viewAllCollections:(NSArray*)collections
+{
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    CollectionSelectorTableViewController *selector = (CollectionSelectorTableViewController *)[sb instantiateViewControllerWithIdentifier:@"CollectionSelectorTableViewController"];
+    selector.collectionDelegate = self;
+    [selector setCollections:collections];
+    [self presentViewController:selector animated:YES completion:nil];
 }
 
 

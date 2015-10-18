@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "MattConnection.h"
 #import <StoreKit/StoreKit.h>
+#import "StoreDataSource.h"
 #import <ContentfulDeliveryAPI/ContentfulDeliveryAPI.h>
 
 
@@ -26,7 +27,7 @@
 -(void)didFailToRestorePurchases:(NSError*)error;
 
 @optional
--(void)receivedDataFromModel:(NSArray *)products;
+-(void)receivedDataFromModel:(StoreDataSource *)dataSource;
 @end
 
 @interface StoreModel : NSObject <SKProductsRequestDelegate,SKPaymentTransactionObserver>

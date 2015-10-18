@@ -10,6 +10,8 @@
 #import "Card.h"
 #import <ContentfulDeliveryAPI/ContentfulDeliveryAPI.h>
 #import <MediaPlayer/MediaPlayer.h>
+#import "CollectionModel.h"
+#import "StoreDataSource.h"
 //#import "PurchasingView.h"
 
 @protocol StoreViewDelegate <NSObject>
@@ -19,6 +21,8 @@
 -(void)purchaseCardWithIdentifier:(NSString*)identifier;
 -(void)purchaseComplete:(id)transaction;
 -(void)alreadyPurchased;
+
+-(void)viewAllCollections:(NSArray*)collections;
 @end
 
 @interface StoreView : UIView {
@@ -29,10 +33,13 @@
     UIView *modal;
     UIButton *closeBtn;
     UIButton *buyCard;
+    UIButton *buyCollectionButton;
     MPMoviePlayerController *moviePlayer;
     BOOL isLoadingPreview;
     
     UIActivityIndicatorView *purchasingSpinner;
+    
+    StoreDataSource *storeDataSource;
     
 //    PurchasingView *purchasingView;
 }
@@ -43,11 +50,12 @@
 @property (strong, nonatomic) IBOutlet UIPageControl *cardsCount;
 @property (strong, nonatomic) UIActivityIndicatorView *indicator;
 @property (strong, nonatomic) UIActivityIndicatorView *videoIndicator;
-@property (strong, nonatomic) NSMutableArray *allCards;
-@property (strong, nonatomic) NSDictionary *activeCard;
+@property (strong, nonatomic) Card *activeCard;
+@property (strong, nonatomic) CollectionModel *activeCollection;
 
 -(void)buildView;
 -(void)addCardsToUIWithData:(NSMutableArray*)cardsList;
 -(void)updatePurchaseStatus:(NSString*)status isDone:(BOOL)isDone withTransaction:(id)transaction;
 -(void)alreadyPurchased;
+-(void)showCardsForCollection:(CollectionModel*)collection;
 @end
